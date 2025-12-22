@@ -39,7 +39,7 @@
       },
       chart: {
         prompt: "请选择范围查看走势",
-        legend: "1 {base} 兑 {quote}",
+        legend: "{amount} {base} 兑 {quote}",
         range: "{range} · {start} 至 {end}",
       },
       range: {
@@ -99,7 +99,7 @@
       },
       chart: {
         prompt: "Select a range to view the trend",
-        legend: "1 {base} to {quote}",
+        legend: "{amount} {base} to {quote}",
         range: "{range} · {start} to {end}",
       },
       range: {

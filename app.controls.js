@@ -6,7 +6,7 @@
       App.PAIRS.forEach((pair) => {
         const option = document.createElement("option");
         option.value = pair.id;
-        option.textContent = `${pair.base} → ${pair.quote}`;
+        option.textContent = App.getDatasetLabel(pair);
         App.dom.pairSelect.appendChild(option);
       });
       App.dom.pairSelect.value = App.state.chartPairId;

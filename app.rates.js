@@ -10,6 +10,7 @@
       const card = document.createElement("article");
       card.className = "rate-card";
       card.style.animationDelay = `${index * 70}ms`;
+      const displayAmount = App.getDisplayAmount(pair);
 
       card.innerHTML = `
         <div class="pair">
@@ -19,7 +20,7 @@
         </div>
         <div class="rate-value" id="rate-${pair.id}" aria-live="polite">--</div>
         <div class="rate-sub">
-          1 ${pair.base} = <span id="rate-text-${pair.id}">--</span> ${pair.quote}
+          ${displayAmount} ${pair.base} = <span id="rate-text-${pair.id}">--</span> ${pair.quote}
         </div>
         <div class="rate-meta" id="rate-date-${pair.id}">
           ${App.t("card.baseDate", { date: "--" })}
@@ -77,7 +78,9 @@
         if (!elements) {
           return;
         }
-        const displayValue = App.formatRate(result.rate);
+        const pair = App.pairById.get(result.pairId);
+        const displayRate = App.scaleRateForDisplay(result.rate, pair);
+        const displayValue = App.formatRate(displayRate);
         elements.value.textContent = displayValue;
         elements.text.textContent = displayValue;
         elements.date.textContent = App.t("card.baseDate", {

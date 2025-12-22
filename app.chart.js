@@ -24,7 +24,7 @@
         labels,
         datasets: [
           {
-            label: `${pair.base} → ${pair.quote}`,
+            label: App.getDatasetLabel(pair),
             data: values,
             borderColor: "#e07a5f",
             backgroundColor: gradient,
@@ -107,6 +107,7 @@
     }
     if (App.dom.chartLegend) {
       App.dom.chartLegend.textContent = App.t("chart.legend", {
+        amount: App.getDisplayAmount(pair),
         base: pair.base,
         quote: pair.quote,
       });
@@ -122,7 +123,9 @@
       }
       const data = await response.json();
       const labels = Object.keys(data.rates).sort();
-      const values = labels.map((date) => data.rates[date][pair.quote]);
+      const values = labels.map((date) =>
+        App.scaleRateForDisplay(data.rates[date][pair.quote], pair)
+      );
 
       if (labels.length === 0) {
         App.setChartStatus(App.t("status.empty"));

@@ -28,6 +28,26 @@
     language: "zh",
   };
 
+  App.getDisplayAmount = (pair) => {
+    const pairId = typeof pair === "string" ? pair : pair?.id;
+    return pairId === "JPY_CNY" ? 100 : 1;
+  };
+
+  App.getDatasetLabel = (pair) => {
+    const amount = App.getDisplayAmount(pair);
+    if (amount === 1) {
+      return `${pair.base} → ${pair.quote}`;
+    }
+    return `${amount} ${pair.base} → ${pair.quote}`;
+  };
+
+  App.scaleRateForDisplay = (rate, pair) => {
+    if (typeof rate !== "number" || Number.isNaN(rate)) {
+      return rate;
+    }
+    return rate * App.getDisplayAmount(pair);
+  };
+
   App.pairById = new Map(App.PAIRS.map((pair) => [pair.id, pair]));
   App.rateElements = new Map();
 
