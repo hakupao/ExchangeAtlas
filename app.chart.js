@@ -73,7 +73,7 @@
             },
             ticks: {
               color: "#5f6e76",
-              callback: (value) => App.formatRate(value),
+              callback: (value) => App.formatAxisTick(value),
             },
           },
         },

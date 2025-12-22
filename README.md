@@ -3,6 +3,8 @@
 Exchange Atlas is a static exchange-rate dashboard built on the Frankfurter API.
 It shows live rates and historical line charts for a curated set of currency pairs.
 
+Live site: https://exchange.bojiang.org
+
 ## Features
 - Live quotes auto-refresh every 60 seconds
 - Historical charts for 7 days, 30 days, 6 months, 1 year, and 3 years

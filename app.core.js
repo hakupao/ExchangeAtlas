@@ -56,6 +56,17 @@
     return String(value);
   };
 
+  App.formatAxisTick = (value) => {
+    if (typeof value !== "number" || Number.isNaN(value)) {
+      return "--";
+    }
+    const normalized = Number(value.toPrecision(12));
+    if (!Number.isFinite(normalized)) {
+      return String(value);
+    }
+    return String(normalized);
+  };
+
   App.formatDate = (date) => {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, "0");

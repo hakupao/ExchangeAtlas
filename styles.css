@@ -259,6 +259,11 @@ main {
   animation: rise 0.7s ease both;
 }
 
+.rate-card > * {
+  position: relative;
+  z-index: 1;
+}
+
 .rate-card::after {
   content: "";
   position: absolute;
@@ -266,6 +271,7 @@ main {
   background: radial-gradient(circle at top right, rgba(224, 122, 95, 0.18), transparent 45%);
   opacity: 0;
   transition: opacity 0.3s ease;
+  pointer-events: none;
 }
 
 .rate-card:hover::after {
@@ -442,6 +448,10 @@ canvas {
   gap: 8px;
 }
 
+.footer-link a {
+  overflow-wrap: anywhere;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -479,8 +489,21 @@ canvas {
 }
 
 @media (max-width: 600px) {
+  .hero {
+    padding: 56px 6vw 36px;
+  }
+
   .hero-top {
     align-items: flex-start;
+  }
+
+  .lang-switch {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .panel {
+    padding: 20px;
   }
 
   .panel-header {
@@ -496,9 +519,31 @@ canvas {
     grid-template-columns: 1fr;
   }
 
+  .rates-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ghost-button,
+  .primary-button,
+  .range-buttons button {
+    padding: 8px 16px;
+  }
+
+  .range-buttons button {
+    font-size: 0.85rem;
+  }
+
   .chart-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .chart-wrap {
+    height: 240px;
+  }
+
+  .footer-link {
+    flex-wrap: wrap;
   }
 }
 
