@@ -1,6 +1,67 @@
 (() => {
   const App = window.ExchangeApp || (window.ExchangeApp = {});
 
+  const crosshairPlugin = {
+    id: "crosshair",
+    afterInit(chart) {
+      chart.$crosshair = { active: false, x: 0, y: 0 };
+    },
+    afterEvent(chart, args) {
+      const { event, inChartArea } = args;
+      const state = chart.$crosshair || (chart.$crosshair = {});
+
+      if (!inChartArea) {
+        if (state.active) {
+          state.active = false;
+          args.changed = true;
+        }
+        return;
+      }
+
+      const points = chart.getElementsAtEventForMode(
+        event,
+        "index",
+        { intersect: false },
+        false
+      );
+
+      if (points.length) {
+        const { x, y } = points[0].element;
+        if (!state.active || state.x !== x || state.y !== y) {
+          state.active = true;
+          state.x = x;
+          state.y = y;
+          args.changed = true;
+        }
+      } else if (state.active) {
+        state.active = false;
+        args.changed = true;
+      }
+    },
+    afterDatasetsDraw(chart, _args, options) {
+      const state = chart.$crosshair;
+      if (!state?.active) {
+        return;
+      }
+      const { ctx, chartArea } = chart;
+      ctx.save();
+      ctx.lineWidth = options.lineWidth || 1;
+      ctx.strokeStyle = options.color || "rgba(16, 33, 42, 0.25)";
+      ctx.setLineDash(options.dash || [4, 4]);
+
+      ctx.beginPath();
+      ctx.moveTo(state.x, chartArea.top);
+      ctx.lineTo(state.x, chartArea.bottom);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.moveTo(chartArea.left, state.y);
+      ctx.lineTo(chartArea.right, state.y);
+      ctx.stroke();
+      ctx.restore();
+    },
+  };
+
   App.renderChart = (labels, values, pair) => {
     const canvas = document.getElementById("rateChart");
     if (!canvas) {
@@ -20,6 +81,7 @@
 
     App.state.chart = new Chart(ctx, {
       type: "line",
+      plugins: [crosshairPlugin],
       data: {
         labels,
         datasets: [
@@ -29,7 +91,7 @@
             borderColor: "#e07a5f",
             backgroundColor: gradient,
             borderWidth: 2,
-            tension: 0.3,
+            tension: 0,
             fill: true,
             pointRadius: 0,
             pointHoverRadius: 4,
@@ -55,6 +117,11 @@
                   context.parsed.y
                 )}`,
             },
+          },
+          crosshair: {
+            color: "rgba(16, 33, 42, 0.22)",
+            dash: [5, 4],
+            lineWidth: 1,
           },
         },
         scales: {
