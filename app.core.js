@@ -69,22 +69,45 @@
     ? Array.from(App.dom.langSwitch.querySelectorAll("button"))
     : [];
 
-  App.formatRate = (value) => {
+  App.normalizeNumber = (value) => {
     if (typeof value !== "number" || Number.isNaN(value)) {
+      return null;
+    }
+    const normalized = Number(value.toPrecision(12));
+    return Number.isFinite(normalized) ? normalized : value;
+  };
+
+  App.getRatePrecision = (value) => {
+    const absValue = Math.abs(value);
+    if (absValue >= 100) {
+      return 2;
+    }
+    if (absValue >= 1) {
+      return 4;
+    }
+    return 6;
+  };
+
+  App.formatRate = (value) => {
+    const normalized = App.normalizeNumber(value);
+    if (normalized === null) {
       return "--";
     }
-    return String(value);
+    return normalized.toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: App.getRatePrecision(normalized),
+    });
   };
 
   App.formatAxisTick = (value) => {
-    if (typeof value !== "number" || Number.isNaN(value)) {
+    const normalized = App.normalizeNumber(value);
+    if (normalized === null) {
       return "--";
     }
-    const normalized = Number(value.toPrecision(12));
-    if (!Number.isFinite(normalized)) {
-      return String(value);
-    }
-    return String(normalized);
+    return normalized.toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: App.getRatePrecision(normalized),
+    });
   };
 
   App.formatDate = (date) => {
