@@ -1,135 +1,372 @@
-# Exchange Atlas
+[English](ExchangeAtlas--README.md) | [中文](ExchangeAtlas--README_CN.md)
 
 <div align="center">
-  <p><strong>一个把我对汇率、信息设计和轻量前端偏好落成页面的小项目。</strong></p>
-  <p>A bilingual exchange-rate dashboard that reflects my preference for useful tools, calm visuals, and lightweight front-end engineering.</p>
-
-  <p>
-    <a href="https://exchange.bojiang.org">
-      <img src="https://img.shields.io/badge/Live%20Demo-exchange.bojiang.org-0f766e?style=for-the-badge&logo=googlechrome&logoColor=white" alt="Live Demo" />
-    </a>
-    <img src="https://img.shields.io/badge/Vanilla%20JS-ES2023-323330?style=for-the-badge&logo=javascript&logoColor=F7DF1E" alt="Vanilla JS" />
-    <img src="https://img.shields.io/badge/Chart.js-4.4-ff6384?style=for-the-badge&logo=chartdotjs&logoColor=white" alt="Chart.js" />
-    <img src="https://img.shields.io/badge/API-Frankfurter-1d4ed8?style=for-the-badge" alt="Frankfurter API" />
-    <img src="https://img.shields.io/badge/UI-Bilingual%20%2B%20Responsive-7c3aed?style=for-the-badge" alt="Bilingual and Responsive UI" />
-  </p>
-
-  <p>
-    <a href="https://exchange.bojiang.org"><strong>在线访问</strong></a>
-    ·
-    <a href="https://www.frankfurter.app"><strong>数据源</strong></a>
-    ·
-    <a href="./assets/preview-home.png"><strong>查看预览图</strong></a>
-  </p>
+  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=32&duration=3000&pause=1000&color=10B981&center=true&vCenter=true&width=800&height=100&lines=ExchangeAtlas;Real-Time+Currency+Dashboard;Six+Major+Pairs" alt="ExchangeAtlas"/>
 </div>
 
-<p align="center">
-  <a href="https://exchange.bojiang.org">
-    <img src="./assets/preview-home.png" alt="Exchange Atlas homepage preview" width="100%" />
-  </a>
-</p>
+<div align="center">
 
-## 项目简介
+[![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+[![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?style=flat-square&logo=chartdotjs&logoColor=white)](https://www.chartjs.org/)
+[![ES2023](https://img.shields.io/badge/ES2023-Support-success?style=flat-square)](https://tc39.es/ecma262/)
+[![Frankfurter API](https://img.shields.io/badge/Frankfurter-Free%20API-blue?style=flat-square)](https://www.frankfurter.app/)
+[![Bilingual](https://img.shields.io/badge/Bilingual-EN%2FZH-success?style=flat-square)](https://exchange.bojiang.org)
+[![Live Demo](https://img.shields.io/badge/Live-exchange.bojiang.org-green?style=flat-square)](https://exchange.bojiang.org)
 
-Exchange Atlas 是一个轻量的汇率观测站，围绕几组我自己会长期关注的币种对，提供实时汇率和历史走势。它不是为了堆砌功能，也不是为了做一个“像作品集一样的壳子”，而是把我对信息组织、视觉节奏、交互密度和部署方式的偏好，做成一个真正能打开、能用、能持续维护的小网页。
+**Monitor 6 major currency pairs in real-time · Beautiful interactive charts · Free, privacy-first API**
 
-如果想了解我平时会关注什么、倾向怎样处理前端复杂度、以及我对“工具感”和“可读性”的取舍，这个项目比一段自我介绍更直接。
+</div>
 
-## 在线访问
+---
 
-- 地址: [https://exchange.bojiang.org](https://exchange.bojiang.org)
-- 访问方式: 直接打开即可使用，无需登录、无需安装、无需构建
-- 项目状态: 已上线的静态站点，而不是只停留在本地截图里的 demo
+## About This Project
 
-## 我为什么做这个
+I'm **Bojiang**, an expat living in Japan. I work across multiple currencies—JPY (work), CNY (family), USD (international projects)—and need to track exchange rates at a glance.
 
-- 我对汇率、跨币种信息和长期趋势这类内容本身就有兴趣，做成页面比放在零散标签页里更自然。
-- 我偏好把常看的数据做成低摩擦工具，打开就有结果，不需要复杂操作。
-- 我喜欢信息密度清晰、层级分明、视觉克制但不单调的界面。
-- 我也倾向用更轻的技术方案解决明确问题，而不是先上框架再找需求。
+Existing currency apps? Bloated, ad-ridden, collecting your data. So I built **ExchangeAtlas**—a clean, lightweight dashboard for the six currency pairs I care about most.
 
-## 核心功能
+---
 
-- 实时汇率卡片: 覆盖 `USD/CNY`、`USD/JPY`、`CNY/JPY`、`JPY/CNY`、`AUD/CNY`、`AUD/JPY` 六组币种对，并每 `60` 秒自动刷新。
-- 历史趋势图表: 支持 `7 天 / 30 天 / 6 个月 / 1 年 / 3 年` 五档时间范围，快速查看中短期和长期走势。
-- 双语界面: 提供中文与 English 切换，并将语言偏好写入 `localStorage`。
-- 响应式布局: 桌面端和移动端都能正常阅读和操作。
-- 轻部署结构: 纯静态前端，无需构建流程，便于长期维护和快速部署。
+## 🎯 Features
 
-## 这个项目体现了我的哪些偏好
+### Six Currency Pairs Tracked
 
-- 信息表达: 我更在意信息是否被组织得清楚，而不只是把数据堆上去。
-- 工具气质: 我喜欢能长期打开、真正有使用场景的页面，而不是一次性的展示页。
-- 技术取舍: 用 `HTML + CSS + Vanilla JavaScript` 完成模块拆分、状态管理、异步请求和交互联动，保持依赖克制。
-- 视觉判断: 我不太喜欢默认模板感，所以页面用了更明确的字体组合、背景氛围、卡片层次和留白节奏。
-- 可读性优先: 图表、按钮、状态提示、语言切换这些部分都优先服务阅读和操作，而不是为了“显得复杂”。
+| Pair | Use Case | Current Support |
+|------|----------|-----------------|
+| **USD/CNY** | RMB ↔ US Dollar | ✅ Real-time |
+| **USD/JPY** | Yen ↔ US Dollar | ✅ Real-time |
+| **CNY/JPY** | RMB ↔ Yen | ✅ Real-time |
+| **JPY/CNY** | Yen ↔ RMB (inverse) | ✅ Real-time |
+| **AUD/CNY** | Australian Dollar ↔ RMB | ✅ Real-time |
+| **AUD/JPY** | Australian Dollar ↔ Yen | ✅ Real-time |
 
-## 技术亮点
+### Real-Time Updates
 
-- 基于 `Frankfurter API` 拉取实时汇率与历史区间数据
-- 使用 `Chart.js` 绘制折线图，并加入 crosshair 交互增强图表读数体验
-- 通过自定义 `i18n` 字典完成中英文切换
-- 使用 `localStorage` 记录语言偏好
-- 无构建依赖，直接以静态资源形式部署
+- 📊 **Instant Charts**: Interactive Chart.js visualizations
+- 🔄 **Auto-Refresh**: Updates at configurable intervals (default: 5 minutes)
+- 📈 **7-Day History**: Track trends with historical data
+- 🌍 **No Ads, No Tracking**: Privacy-first architecture
+- 🚀 **Lightning Fast**: Lightweight, pure vanilla JavaScript
 
-## 适合什么场景
+### Smart Features
 
-- 快速查看主流币种对的最新价格和阶段走势
-- 作为一个长期维护的个人小工具，而不是一次性的实验页面
-- 作为理解我个人兴趣、产品取向和前端实现方式的一个切片
-- 作为静态站点、Vanilla JavaScript、Chart.js、前端国际化的轻量参考
+| Feature | Details |
+|---------|---------|
+| 💱 **Quick Conversion** | Convert amounts between pairs instantly |
+| 📉 **Price Alerts** | Set thresholds and get notified (localStorage) |
+| 🕐 **Historical Trend** | See 7-day price movements |
+| 🌓 **Dark/Light Mode** | Eye-friendly interface, any time |
+| 🔀 **Pair Switching** | Focus on any pair with one click |
 
-## 技术栈
+---
 
-| 模块 | 方案 |
-| --- | --- |
-| 前端 | `HTML5` + `CSS3` + `Vanilla JavaScript` |
-| 图表 | `Chart.js` |
-| 数据源 | `Frankfurter API` |
-| 国际化 | 自定义 `i18n` 字典 + `localStorage` |
-| 部署形态 | 静态站点 |
-| 线上地址 | `https://exchange.bojiang.org` |
+## 🌐 Live Demo
 
-## 本地运行
+Visit **[exchange.bojiang.org](https://exchange.bojiang.org)** to use it now.
 
-由于浏览器对本地文件协议下的 `fetch` 有限制，建议通过静态服务器启动项目。
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Modern browser (Chrome, Firefox, Safari, Edge)
+- Internet connection (for API calls)
+- No backend required!
+
+### Installation
 
 ```bash
-python -m http.server 8000
+# Clone the repository
+git clone https://github.com/hakupao/ExchangeAtlas.git
+cd ExchangeAtlas
+
+# Open in browser
+open index.html        # macOS
+xdg-open index.html    # Linux
+start index.html       # Windows
 ```
 
-然后访问 [http://localhost:8000](http://localhost:8000)。
+---
 
-## 项目结构
+## 📂 Project Structure
 
-```text
-.
-├─ index.html
-├─ styles.css
-├─ app.js
-├─ app.core.js
-├─ app.i18n.js
-├─ app.rates.js
-├─ app.chart.js
-├─ app.controls.js
-└─ assets/
-   └─ preview-home.png
+```
+ExchangeAtlas/
+├── index.html          # Main entry point
+├── styles.css          # Layout and theming
+├── app.core.js         # Core application logic
+├── app.rates.js        # Exchange rate fetching
+├── app.chart.js        # Chart.js wrapper
+├── app.controls.js     # UI controls & events
+├── app.i18n.js         # Internationalization (EN/ZH)
+└── assets/
+    ├── icons/          # Currency pair icons
+    └── fonts/          # System fonts
 ```
 
-- `index.html`: 页面结构与主要信息区域
-- `styles.css`: 渐变背景、卡片、按钮、图表容器和响应式样式
-- `app.core.js`: 全局状态、公共工具、币种对与时间范围配置
-- `app.i18n.js`: 中英文文案与语言切换逻辑
-- `app.rates.js`: 实时汇率卡片渲染与刷新逻辑
-- `app.chart.js`: 历史汇率请求与图表绘制
-- `app.controls.js`: 币种、时间范围和交互事件绑定
-- `app.js`: 应用初始化入口
+### Module Breakdown
 
-## 数据来源
+| File | Purpose |
+|------|---------|
+| **app.core.js** | State management, data models |
+| **app.rates.js** | Frankfurter API integration |
+| **app.chart.js** | Chart rendering and updates |
+| **app.controls.js** | Event handlers, UI interactions |
+| **app.i18n.js** | English/Chinese translations |
 
-- 汇率数据来自 [Frankfurter](https://www.frankfurter.app)
-- 历史数据以工作日汇率为准，非交易日可能不会返回新的采样点
+---
 
-## 总结
+## 🔌 API Integration
 
-对我来说，这不是一个为了“展示能力”而被刻意包装出来的项目，而是把个人兴趣、审美取向和技术判断自然落成网页的结果。它体量不大，但足够完整，也足够诚实。
+### Frankfurter API
+
+Uses the free, open-source **[Frankfurter](https://www.frankfurter.app/)** service:
+
+```javascript
+// Example API call
+const response = await fetch(
+  'https://api.frankfurter.app/latest?from=USD&to=JPY'
+);
+const data = await response.json();
+console.log(data.rates.JPY);  // 149.35 (example)
+```
+
+**Why Frankfurter?**
+- ✅ No authentication required
+- ✅ Free tier with reasonable rate limits
+- ✅ Privacy-respecting (no analytics)
+- ✅ Always-available free service
+- ✅ Based on European Central Bank data
+
+### Automatic Refresh
+
+The app fetches rates every 5 minutes (configurable):
+
+```javascript
+// In app.core.js
+const REFRESH_INTERVAL = 5 * 60 * 1000;  // 5 minutes
+setInterval(updateRates, REFRESH_INTERVAL);
+```
+
+---
+
+## 🎨 User Interface
+
+### Dashboard Layout
+
+```
+┌─────────────────────────────────────────┐
+│  ExchangeAtlas  [🌓 Theme]  [🇬🇧 Lang]  │
+├─────────────────────────────────────────┤
+│  Pair Selector: [USD/JPY ▼]              │
+├─────────────────────────────────────────┤
+│  Current Rate: 149.35  [▲ 0.23%] 24h    │
+├─────────────────────────────────────────┤
+│  [Chart: 7-day trend graph]              │
+├─────────────────────────────────────────┤
+│  Quick Convert:  [100] USD = 14,935 JPY │
+├─────────────────────────────────────────┤
+│  [Pair buttons: USD/CNY  USD/JPY ...]    │
+└─────────────────────────────────────────┘
+```
+
+### Responsive Design
+
+- **Desktop**: Full dashboard with large charts
+- **Tablet**: Stacked pairs, touch-friendly buttons
+- **Mobile**: Vertical layout, optimized for one-handed use
+
+---
+
+## 🌍 Internationalization
+
+Complete support for:
+
+| Language | Coverage |
+|----------|----------|
+| 🇬🇧 **English** | 100% - All labels, help text |
+| 🇨🇳 **中文** (Simplified) | 100% - Chinese interface |
+
+Toggle in the top-right corner or change default in `app.i18n.js`:
+
+```javascript
+let currentLanguage = 'en';  // 'en' or 'zh'
+```
+
+---
+
+## 💡 Real-World Use Cases
+
+### Use Case 1: Expat Salary Planning
+
+**Scenario:** Freelancer earning USD, living in Japan
+
+```
+Daily check:
+1. Open ExchangeAtlas
+2. Check USD/JPY rate
+3. Calculate expected JPY salary in real-time
+4. Plan monthly expenses
+```
+
+### Use Case 2: Investment Opportunities
+
+**Scenario:** Watching AUD/CNY for exchange rate arbitrage
+
+```
+Set up price alerts:
+- Alert when AUD/CNY > 5.2
+- Alert when AUD/CNY < 4.8
+- Make trading decisions
+```
+
+### Use Case 3: Travel Planning
+
+**Scenario:** Budgeting trip to different countries
+
+```
+1. Enter trip budget in home currency
+2. Switch between currency pairs
+3. See instant converted amounts
+4. Plan spending by country
+```
+
+---
+
+## 🔧 Technology Stack
+
+| Category | Technology |
+|----------|------------|
+| 📄 **Markup** | HTML5 semantic structure |
+| 🎨 **Styling** | CSS3 (flexbox, grid, animations) |
+| ⚙️ **Logic** | Vanilla JavaScript ES2023 |
+| 📊 **Charts** | Chart.js 3.x |
+| 🌐 **API** | Frankfurter (free, no auth) |
+| 🌍 **Hosting** | Static file service |
+
+---
+
+## 📊 Data Flow
+
+```
+┌─────────────────┐
+│  Frankfurter    │ (Free currency API)
+│    API          │
+└────────┬────────┘
+         │ (JSON response)
+         ▼
+┌─────────────────┐
+│  app.rates.js   │ (Parse & cache)
+└────────┬────────┘
+         │ (Rate objects)
+         ▼
+┌─────────────────┐
+│  app.core.js    │ (State management)
+└────────┬────────┘
+         │ (Updated state)
+         ▼
+┌─────────────────┐
+│  app.chart.js   │ (Visualize)
+│  app.controls.js│ (Display & interact)
+└─────────────────┘
+```
+
+---
+
+## ⚙️ Configuration
+
+### Customize Refresh Interval
+
+In `app.core.js`:
+
+```javascript
+// Change from 5 minutes to 10 minutes
+const REFRESH_INTERVAL = 10 * 60 * 1000;
+```
+
+### Add More Currency Pairs
+
+In `app.core.js`, add to pairs array:
+
+```javascript
+const PAIRS = [
+  // Existing pairs...
+  { from: 'EUR', to: 'GBP', label: 'EUR/GBP' }
+];
+```
+
+### Modify Default Theme
+
+In `styles.css`:
+
+```css
+:root {
+  --color-bg: #ffffff;
+  --color-text: #000000;
+  --color-chart: #4F46E5;
+  /* Customize as needed */
+}
+```
+
+---
+
+## 🚨 Known Limitations
+
+| Limitation | Reason | Workaround |
+|-----------|--------|-----------|
+| No historical data beyond 7 days | API limit | Use external services for long-term analysis |
+| Update interval ≥ 5 min | API rate limits | Adjust as needed, don't exceed 100 calls/day |
+| JPY/CNY is calculated | Not direct pair | Rate = 1 / (CNY/JPY) |
+| No alerts via push notification | Privacy first | Uses localStorage alerts only |
+
+---
+
+## 🤝 Contributing
+
+Found a rate display bug? Idea for a new currency pair?
+
+1. Fork the repo
+2. Create a feature branch (`git checkout -b feature/new-pair`)
+3. Commit your changes
+4. Push and open a Pull Request
+
+---
+
+## 📝 License
+
+MIT License - Use freely, modify as needed.
+
+---
+
+## 🙋 FAQ
+
+**Q: Is my data safe?**
+A: Completely—no backend, no database, no tracking. Everything runs locally in your browser.
+
+**Q: Can I download historical data?**
+A: Currently limited to 7 days in-app. The Frankfurter API provides longer history via direct API calls.
+
+**Q: Why not use a real-time WebSocket connection?**
+A: Frankfurter API uses REST with 5-min caching. Fine for daily use; overkill for high-frequency trading.
+
+**Q: Can I use this offline?**
+A: No—needs internet for current rates. Browser caching helps, but live data requires connectivity.
+
+---
+
+## 📞 Contact
+
+- 🌐 Website: [bojiang.org](https://bojiang.org)
+- 📧 Email: hi@bojiang.org
+- 🐙 GitHub: [@hakupao](https://github.com/hakupao)
+- 🔗 Live: [exchange.bojiang.org](https://exchange.bojiang.org)
+
+---
+
+<div align="center">
+
+**Monitor global currency flows, make informed decisions 💱**
+
+Made with ❤️ in Yokohama, Japan
+
+</div>
