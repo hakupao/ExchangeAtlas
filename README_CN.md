@@ -1,4 +1,4 @@
-[English](ExchangeAtlas--README.md) | [中文](ExchangeAtlas--README_CN.md)
+[English](README.md) | [中文](README_CN.md)
 
 <div align="center">
   <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=32&duration=3000&pause=1000&color=10B981&center=true&vCenter=true&width=800&height=100&lines=ExchangeAtlas;实时汇率看板;六大货币对" alt="ExchangeAtlas"/>
@@ -10,7 +10,12 @@
 [![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?style=flat-square&logo=chartdotjs&logoColor=white)](https://www.chartjs.org/)
 [![ES2023](https://img.shields.io/badge/ES2023-支持-success?style=flat-square)](https://tc39.es/ecma262/)
 [![Frankfurter API](https://img.shields.io/badge/Frankfurter-免费API-blue?style=flat-square)](https://www.frankfurter.app/)
-[![双语支持](https://img.shields.io/badge/双语-中英-success?style=flat-square)](https://exchange.bojiang.org)
+[![双语支持](https://img.shields.io/badge/双语-中英-success?style=flat-square)](https://exchange.bojiang.org
+
+<div align="center">
+  <img src="assets/preview-home.png" alt="ExchangeAtlas 预览" width="700"/>
+</div>
+)
 [![在线演示](https://img.shields.io/badge/在线-exchange.bojiang.org-green?style=flat-square)](https://exchange.bojiang.org)
 
 **实时监控6大货币对 · 精美交互图表 · 免费隐私API**
