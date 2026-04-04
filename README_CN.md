@@ -362,7 +362,7 @@ A: 不行——需要网络获取实时汇率。浏览器缓存有帮助，但�
 ## 📞 联系方式
 
 - 🌐 网站: [bojiang.org](https://bojiang.org)
-- 📧 邮箱: hi@bojiang.org
+- 📧 邮箱: cnhakupao@yahoo.co.jp
 - 🐙 GitHub: [@hakupao](https://github.com/hakupao)
 - 🔗 在线: [exchange.bojiang.org](https://exchange.bojiang.org)
 

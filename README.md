@@ -362,7 +362,7 @@ A: No—needs internet for current rates. Browser caching helps, but live data r
 ## 📞 Contact
 
 - 🌐 Website: [bojiang.org](https://bojiang.org)
-- 📧 Email: hi@bojiang.org
+- 📧 Email: cnhakupao@yahoo.co.jp
 - 🐙 GitHub: [@hakupao](https://github.com/hakupao)
 - 🔗 Live: [exchange.bojiang.org](https://exchange.bojiang.org)
 
