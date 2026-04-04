@@ -1,7 +1,7 @@
 [English](README.md) | [中文](README_CN.md)
 
 <div align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=32&duration=3000&pause=1000&color=10B981&center=true&vCenter=true&width=800&height=100&lines=ExchangeAtlas;实时汇率看板;六大货币对" alt="ExchangeAtlas"/>
+  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&weight=700&size=32&duration=3000&pause=1000&color=10B981&center=true&vCenter=true&width=800&height=100&lines=ExchangeAtlas;%E5%AE%9E%E6%97%B6%E6%B1%87%E7%8E%87%E7%9C%8B%E6%9D%BF;%E5%85%AD%E5%A4%A7%E8%B4%A7%E5%B8%81%E5%AF%B9" alt="ExchangeAtlas"/>
 </div>
 
 <div align="center">
