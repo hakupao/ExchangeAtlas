@@ -56,7 +56,7 @@
 
   App.fetchLatestRate = async (pair) => {
     const response = await fetch(
-      `${App.API_BASE}/latest?from=${pair.base}&to=${pair.quote}`
+      `${App.API_BASE}/latest?base=${pair.base}&symbols=${pair.quote}`
     );
     if (!response.ok) {
       throw new Error("Failed to fetch latest rate");

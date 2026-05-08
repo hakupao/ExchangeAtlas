@@ -1,7 +1,7 @@
 (() => {
   const App = window.ExchangeApp || (window.ExchangeApp = {});
 
-  App.API_BASE = "https://api.frankfurter.app";
+  App.API_BASE = "https://api.frankfurter.dev/v1";
   App.PAIRS = [
     { id: "USD_CNY", base: "USD", quote: "CNY" },
     { id: "USD_JPY", base: "USD", quote: "JPY" },

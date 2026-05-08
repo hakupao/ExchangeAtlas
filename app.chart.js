@@ -183,7 +183,7 @@
 
     try {
       const response = await fetch(
-        `${App.API_BASE}/${start}..${end}?from=${pair.base}&to=${pair.quote}`
+        `${App.API_BASE}/${start}..${end}?base=${pair.base}&symbols=${pair.quote}`
       );
       if (!response.ok) {
         throw new Error("Failed to fetch history");
