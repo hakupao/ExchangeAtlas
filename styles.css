@@ -293,7 +293,71 @@ main {
 .rate-value {
   font-size: clamp(1.6rem, 3vw, 2.4rem);
   font-weight: 600;
-  margin: 14px 0 6px;
+  margin: 14px 0 4px;
+  padding: 2px 6px;
+  margin-left: -6px;
+  border-radius: 10px;
+  width: fit-content;
+  transition: color 0.25s ease;
+}
+
+/* Google-Finance-style tick flash: brief background + color, then settle back. */
+.rate-value.up {
+  color: #1f9d57;
+  animation: flashUp 0.9s ease;
+}
+
+.rate-value.down {
+  color: #cf4d4d;
+  animation: flashDown 0.9s ease;
+}
+
+@keyframes flashUp {
+  0% {
+    background: rgba(31, 157, 87, 0.28);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+@keyframes flashDown {
+  0% {
+    background: rgba(207, 77, 77, 0.28);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+.rate-change {
+  font-size: 0.85rem;
+  font-weight: 600;
+  min-height: 1.2em;
+  margin-bottom: 6px;
+  letter-spacing: 0.01em;
+}
+
+.rate-change.up {
+  color: #1f9d57;
+}
+
+.rate-change.down {
+  color: #cf4d4d;
+}
+
+.offshore-badge {
+  margin-left: auto;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-strong);
+  background: rgba(47, 93, 98, 0.12);
+  border: 1px solid rgba(47, 93, 98, 0.25);
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 600;
+  cursor: help;
 }
 
 .rate-sub {

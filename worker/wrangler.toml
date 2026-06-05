@@ -1,0 +1,9 @@
+name = "exchangeatlas-rates"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+# Optional realtime fallback source (Twelve Data, free 800 req/day).
+# Do NOT put the key here — set it as an encrypted secret instead:
+#   npx wrangler secret put TWELVEDATA_KEY
+#
+# Yahoo (the primary source) needs no key, so the Worker works without this.

@@ -20,7 +20,22 @@
     }
     if (typeof App.updateLiveRates === "function") {
       App.updateLiveRates();
-      setInterval(App.updateLiveRates, 60 * 1000);
+      // Poll every 15s; the Worker caches ~20s so upstream load stays tiny.
+      setInterval(() => {
+        App.updateLiveRates();
+        // If the chart is on an intraday range, extend its line live too.
+        const range = App.RANGE_PRESETS.find(
+          (item) => item.id === App.state.rangeId
+        );
+        if (
+          range &&
+          range.intraday &&
+          App.isLiveConfigured() &&
+          typeof App.updateChart === "function"
+        ) {
+          App.updateChart({ live: true });
+        }
+      }, 15 * 1000);
     }
     if (typeof App.updateChart === "function") {
       App.updateChart();

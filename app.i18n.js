@@ -4,8 +4,8 @@
   App.I18N = {
     zh: {
       htmlLang: "zh-CN",
-      title: "汇率观测站 | Frankfurter",
-      eyebrow: "Frankfurter 汇率接口 · 每 60 秒刷新",
+      title: "汇率观测站 | 实时汇率",
+      eyebrow: "实时汇率 · 每 15 秒刷新",
       headline: "汇率观测站",
       subhead:
         "关注 USD/CNY、AUD/JPY 等 6 组热门币种对。实时获取最新价，并查看近几天、几个月、几年的趋势曲线。",
@@ -15,7 +15,7 @@
         spanLabel: "历史跨度",
         spanValue: "3 年",
         sourceLabel: "数据来源",
-        sourceValue: "Frankfurter",
+        sourceValue: "Yahoo · Frankfurter",
       },
       sections: {
         liveTitle: "实时汇率",
@@ -36,6 +36,7 @@
         chartError: "图表加载失败，请稍后重试。",
         empty: "暂无数据",
         updated: "更新时间: {time}",
+        marketClosed: "休市中",
       },
       chart: {
         prompt: "请选择范围查看走势",
@@ -43,6 +44,7 @@
         range: "{range} · {start} 至 {end}",
       },
       range: {
+        "1d": "今日",
         "7d": "近7天",
         "30d": "近30天",
         "6m": "近6个月",
@@ -50,13 +52,16 @@
         "3y": "近3年",
       },
       footer: {
-        source: "数据源：Frankfurter",
-        note: "提示：Frankfurter 以工作日汇率为准",
+        source: "实时源：Yahoo Finance（经 Cloudflare Worker 代理）· 历史源：Frankfurter",
+        note: "提示：人民币为离岸参考价（CNH-tracking），行情有延迟；历史曲线为 ECB 在岸日参考价",
         projectLabel: "项目地址",
       },
       card: {
         baseDate: "基准日: {date}",
         view: "查看走势",
+        live: "实时 · 延迟行情",
+        offshore: "离岸",
+        offshoreTip: "免费源提供的是离岸人民币（CNH-tracking）参考价，非央行在岸中间价",
       },
       language: {
         label: "语言切换",
@@ -64,8 +69,8 @@
     },
     en: {
       htmlLang: "en",
-      title: "Exchange Atlas | Frankfurter",
-      eyebrow: "Frankfurter FX feed · refreshes every 60s",
+      title: "Exchange Atlas | Live FX",
+      eyebrow: "Live FX · refreshes every 15s",
       headline: "Exchange Atlas",
       subhead:
         "Track USD/CNY, AUD/JPY, and 6 key currency pairs. Get live quotes and trend lines across days, months, and years.",
@@ -75,7 +80,7 @@
         spanLabel: "History span",
         spanValue: "3 years",
         sourceLabel: "Data source",
-        sourceValue: "Frankfurter",
+        sourceValue: "Yahoo · Frankfurter",
       },
       sections: {
         liveTitle: "Live Rates",
@@ -96,6 +101,7 @@
         chartError: "Chart failed to load. Please try again.",
         empty: "No data yet.",
         updated: "Updated: {time}",
+        marketClosed: "Market closed",
       },
       chart: {
         prompt: "Select a range to view the trend",
@@ -103,6 +109,7 @@
         range: "{range} · {start} to {end}",
       },
       range: {
+        "1d": "Today",
         "7d": "Last 7 days",
         "30d": "Last 30 days",
         "6m": "Last 6 months",
@@ -110,13 +117,16 @@
         "3y": "Last 3 years",
       },
       footer: {
-        source: "Source: Frankfurter",
-        note: "Tip: Frankfurter provides weekday rates",
+        source: "Live: Yahoo Finance (via Cloudflare Worker) · History: Frankfurter",
+        note: "Note: CNY is an offshore reference (CNH-tracking) and delayed; history uses ECB onshore daily rates",
         projectLabel: "Project",
       },
       card: {
         baseDate: "Base date: {date}",
         view: "View trend",
+        live: "Live · delayed",
+        offshore: "Offshore",
+        offshoreTip: "Free feeds quote offshore yuan (CNH-tracking), not the PBOC onshore fixing",
       },
       language: {
         label: "Language switch",
