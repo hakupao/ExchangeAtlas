@@ -270,3 +270,56 @@ test("Task 1: i18n zh and en dictionaries have identical keys including instrume
     assert.ok(zhKeys.includes(required), `Missing required i18n key ${required}`);
   }
 });
+
+test("Task 2: index.html and styles.css satisfy Braun instrument DOM, FOUC, and dual-finish CSS contracts", () => {
+  const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const css = fs.readFileSync(path.join(ROOT, "styles.css"), "utf8");
+
+  assert.match(html, /<meta\s+name="color-scheme"\s+content="light dark"\s*\/?>/);
+  assert.match(
+    html,
+    /<meta\s+name="color-scheme"[^>]*>\s*<script>[\s\S]*?localStorage\.getItem\("color-scheme"\)[\s\S]*?<\/script>/
+  );
+  assert.match(html, /IBM\+Plex\+Mono/);
+  assert.match(html, /Space\+Grotesk/);
+  assert.match(html, /Noto\+Sans\+SC/);
+
+  const requiredIds = [
+    "lastUpdated",
+    "liveStatus",
+    "ratesGrid",
+    "refreshRates",
+    "themeToggle",
+    "langSwitch",
+    "rangeButtons",
+    "screenChannel",
+    "screenPrice",
+    "screenDelta",
+    "chartMeta",
+    "chartStatus",
+    "rateChart",
+    "statHigh",
+    "statLow",
+    "statDelta",
+    "statSource",
+    "convBaseInput",
+    "convQuoteInput",
+    "convBaseCode",
+    "convQuoteCode",
+    "convPresets",
+  ];
+  for (const id of requiredIds) {
+    assert.ok(
+      html.includes(`id="${id}"`),
+      `index.html missing required id="${id}"`
+    );
+  }
+
+  assert.match(css, /color-scheme:\s*light dark/);
+  assert.match(css, /:has\(>\s*head\s*>\s*meta\[name="color-scheme"\]\[content="dark"\]\)/);
+  assert.match(css, /:has\(>\s*head\s*>\s*meta\[name="color-scheme"\]\[content="light"\]\)/);
+  assert.match(css, /font-variant-numeric:\s*tabular-nums/);
+  assert.match(css, /@media\s*\(forced-colors:\s*active\)/);
+  assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)/);
+  assert.match(css, /--chart-line:/);
+});

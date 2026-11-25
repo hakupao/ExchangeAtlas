@@ -3,168 +3,257 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Exchange Atlas | 汇率观测站</title>
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      try {
+        var savedScheme = localStorage.getItem("color-scheme");
+        if (savedScheme === "light" || savedScheme === "dark") {
+          document.querySelector('meta[name="color-scheme"]').content = savedScheme;
+        }
+      } catch (e) {}
+    </script>
+    <title>Exchange Atlas | 汇率观测仪</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600&family=Space+Grotesk:wght@400;600&family=ZCOOL+XiaoWei&display=swap"
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="styles.css?v=20260605b" />
+    <link rel="stylesheet" href="styles.css?v=20261125a" />
     <script
       src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
       defer
     ></script>
-    <script src="app.core.js?v=20260605b" defer></script>
-    <script src="app.i18n.js?v=20260605b" defer></script>
-    <script src="app.rates.js?v=20260605b" defer></script>
-    <script src="app.chart.js?v=20260605b" defer></script>
-    <script src="app.controls.js?v=20260605b" defer></script>
-    <script src="app.js?v=20260605b" defer></script>
+    <script src="app.core.js?v=20261125a" defer></script>
+    <script src="app.i18n.js?v=20261125a" defer></script>
+    <script src="app.rates.js?v=20261125a" defer></script>
+    <script src="app.chart.js?v=20261125a" defer></script>
+    <script src="app.controls.js?v=20261125a" defer></script>
+    <script src="app.js?v=20261125a" defer></script>
   </head>
   <body>
-    <header class="hero">
-      <div class="hero-content">
-        <div class="hero-top">
-          <p class="eyebrow" data-i18n="eyebrow">
-            实时汇率 · 每 15 秒刷新
-          </p>
-          <div
-            class="lang-switch"
-            id="langSwitch"
-            role="group"
-            aria-label="Language switch"
-          >
-            <button class="lang-button" type="button" data-lang="zh">中文</button>
-            <button class="lang-button" type="button" data-lang="en">
-              English
-            </button>
+    <main class="instrument-desk">
+      <div class="instrument-chassis">
+        <header class="inst-topbar">
+          <div class="inst-brand-wrap">
+            <div class="braun-grille" aria-hidden="true">
+              <i></i><i></i><i></i><i></i>
+              <i></i><i></i><i></i><i></i>
+              <i></i><i></i><i></i><i></i>
+            </div>
+            <div class="inst-title-block">
+              <h1 class="inst-title">EXCHANGE ATLAS</h1>
+              <span class="inst-subtitle" data-i18n="instrument.subtitle">
+                汇率观测仪 · FX-06
+              </span>
+            </div>
           </div>
-        </div>
-        <h1 data-i18n="headline">汇率观测站</h1>
-        <p class="subhead" data-i18n="subhead">
-          关注 USD/CNY、AUD/JPY 等 6 组热门币种对。实时获取最新价，并查看近几天、几个月、几年的趋势曲线。
-        </p>
-        <div class="hero-metrics">
-          <div class="metric">
-            <span class="metric-label" data-i18n="metrics.pairsLabel"
-              >覆盖币种对</span
-            >
-            <span class="metric-value" data-i18n="metrics.pairsValue">6</span>
-          </div>
-          <div class="metric">
-            <span class="metric-label" data-i18n="metrics.spanLabel"
-              >历史跨度</span
-            >
-            <span class="metric-value" data-i18n="metrics.spanValue">3 年</span>
-          </div>
-          <div class="metric">
-            <span class="metric-label" data-i18n="metrics.sourceLabel"
-              >数据来源</span
-            >
-            <span class="metric-value" data-i18n="metrics.sourceValue"
-              >Yahoo · Frankfurter</span
-            >
-          </div>
-        </div>
-      </div>
-    </header>
 
-    <main>
-      <section class="panel" id="live">
-        <div class="panel-header">
-          <div>
-            <h2 data-i18n="sections.liveTitle">实时汇率</h2>
-            <p data-i18n="sections.liveSubtitle">
-              点击卡片即可快速切换到对应走势。
-            </p>
-          </div>
-          <div class="panel-actions">
-            <button
-              class="ghost-button"
-              id="refreshRates"
-              type="button"
-              data-i18n="controls.refresh"
-            >
-              刷新
-            </button>
-            <span class="timestamp" id="lastUpdated" data-i18n="status.updating"
-              >更新中...</span
-            >
-          </div>
-        </div>
-        <div class="status" id="liveStatus"></div>
-        <div class="rates-grid" id="ratesGrid" role="list"></div>
-      </section>
+          <div class="inst-controls">
+            <div class="status-led-pill" aria-live="polite">
+              <span class="led-dot" aria-hidden="true"></span>
+              <span class="live-tag" data-i18n="instrument.liveTag">15S 实时</span>
+              <span class="pill-sep" aria-hidden="true">·</span>
+              <span class="timestamp" id="lastUpdated" data-i18n="status.updating">
+                同步中...
+              </span>
+              <span class="live-status" id="liveStatus"></span>
+            </div>
 
-      <section class="panel" id="history">
-        <div class="panel-header">
-          <div>
-            <h2 data-i18n="sections.historyTitle">历史走势</h2>
-            <p data-i18n="sections.historySubtitle">
-              可查看近几天、近几个月、近几年的折线图。
-            </p>
-          </div>
-          <div class="panel-actions">
-            <button
-              class="primary-button"
-              id="updateChart"
-              type="button"
-              data-i18n="controls.updateChart"
-            >
-              更新图表
-            </button>
-          </div>
-        </div>
+            <div class="hw-control-group">
+              <button
+                class="hw-btn hw-refresh"
+                id="refreshRates"
+                type="button"
+                data-i18n-aria="controls.refreshAria"
+                data-i18n-title="controls.refreshAria"
+                aria-label="手动刷新实时汇率"
+                title="手动刷新实时汇率"
+              >
+                <svg class="hw-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path
+                    d="M13.5 8a5.5 5.5 0 1 1-1.4-3.65M13.5 2.5v2.75h-2.75"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+                <span class="hw-btn-text" data-i18n="controls.refresh">刷新</span>
+              </button>
 
-        <div class="controls">
-          <div class="control">
-            <label for="pairSelect" data-i18n="controls.pairLabel"
-              >币种对</label
-            >
-            <select id="pairSelect"></select>
-          </div>
-          <div class="control">
-            <span class="control-label" data-i18n="controls.rangeLabel"
-              >时间范围</span
-            >
-            <div class="range-buttons" id="rangeButtons"></div>
-          </div>
-        </div>
+              <button
+                class="hw-btn hw-icon-btn"
+                id="themeToggle"
+                type="button"
+              >
+                <span class="theme-opt theme-opt-to-dark">
+                  <svg class="hw-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path
+                      d="M13.2 9.9A5.5 5.5 0 0 1 6.1 2.8a5.5 5.5 0 1 0 7.1 7.1Z"
+                      stroke="currentColor"
+                      stroke-width="1.45"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  <span class="sr-only" data-i18n="theme.toDark">切换至阳极暗灰涂装</span>
+                </span>
+                <span class="theme-opt theme-opt-to-light">
+                  <svg class="hw-icon" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <circle cx="8" cy="8" r="3" stroke="currentColor" stroke-width="1.45" />
+                    <path
+                      d="M8 1.5v1.6M8 12.9v1.6M1.5 8h1.6M12.9 8h1.6M3.4 3.4l1.1 1.1M11.5 11.5l1.1 1.1M12.6 3.4l-1.1 1.1M4.5 11.5l-1.1 1.1"
+                      stroke="currentColor"
+                      stroke-width="1.45"
+                      stroke-linecap="round"
+                    />
+                  </svg>
+                  <span class="sr-only" data-i18n="theme.toLight">切换至陶瓷浅灰涂装</span>
+                </span>
+              </button>
 
-        <div class="chart-card">
-          <div class="chart-header">
-            <div>
-              <div class="chart-title" id="chartTitle">--</div>
-              <div class="chart-meta" id="chartMeta" data-i18n="chart.prompt">
-                请选择范围查看走势
+              <div
+                class="lang-switch"
+                id="langSwitch"
+                role="group"
+                aria-label="语言切换"
+              >
+                <button class="lang-button" type="button" data-lang="zh">中</button>
+                <button class="lang-button" type="button" data-lang="en">EN</button>
               </div>
             </div>
-            <div class="chart-legend">
-              <span class="dot"></span>
-              <span id="chartLegend">--</span>
-            </div>
           </div>
-          <div class="chart-wrap">
-            <canvas id="rateChart"></canvas>
-          </div>
-          <div class="chart-status" id="chartStatus"></div>
-        </div>
-      </section>
-    </main>
+        </header>
 
-    <footer class="site-footer">
-      <span data-i18n="footer.source">实时源：Yahoo Finance（经 Cloudflare Worker 代理）· 历史源：Frankfurter</span>
-      <span data-i18n="footer.note">提示：人民币为离岸参考价（CNH-tracking），行情有延迟；历史曲线为 ECB 在岸日参考价</span>
-      <span class="footer-link">
-        <span data-i18n="footer.projectLabel">项目地址</span>
-        <a
-          href="https://github.com/hakupao/ExchangeAtlas"
-          target="_blank"
-          rel="noreferrer"
-          >https://github.com/hakupao/ExchangeAtlas</a
-        >
-      </span>
-    </footer>
+        <div class="inst-workbench">
+          <section class="channels-panel" id="live">
+            <div
+              class="channel-list"
+              id="ratesGrid"
+              role="group"
+              data-i18n-aria="instrument.channelsLabel"
+              aria-label="汇率通道列表"
+            ></div>
+          </section>
+
+          <section class="stage-panel" id="history">
+            <div class="plotter-screen">
+              <div class="screen-top">
+                <div class="screen-identity">
+                  <div class="screen-ch" id="screenChannel">CH-01 · USD → CNY</div>
+                  <div class="screen-readout">
+                    <span class="screen-price" id="screenPrice" aria-live="polite">--</span>
+                    <span class="screen-delta" id="screenDelta"></span>
+                  </div>
+                  <div class="screen-meta" id="chartMeta" data-i18n="chart.prompt">
+                    选择时间范围查看走势
+                  </div>
+                </div>
+
+                <div
+                  class="range-well"
+                  id="rangeButtons"
+                  role="group"
+                  data-i18n-aria="controls.rangeLabel"
+                  aria-label="时间范围"
+                ></div>
+              </div>
+
+              <div class="chart-wrap">
+                <canvas id="rateChart"></canvas>
+              </div>
+
+              <div class="screen-footer">
+                <div class="screen-stats">
+                  <span class="stat-item">
+                    <span class="stat-label" data-i18n="stats.high">区间高</span>
+                    <strong class="stat-val" id="statHigh">--</strong>
+                  </span>
+                  <span class="stat-item">
+                    <span class="stat-label" data-i18n="stats.low">区间低</span>
+                    <strong class="stat-val" id="statLow">--</strong>
+                  </span>
+                  <span class="stat-item">
+                    <span class="stat-label" data-i18n="stats.delta">区间涨跌</span>
+                    <strong class="stat-val" id="statDelta">--</strong>
+                  </span>
+                </div>
+                <div class="screen-foot-right">
+                  <span class="chart-status" id="chartStatus" aria-live="polite"></span>
+                  <span class="stat-source" id="statSource">Yahoo · ECB</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="converter-deck">
+              <div class="conv-main">
+                <span class="conv-label" data-i18n="converter.label">换算</span>
+                <div class="conv-pair-group">
+                  <label class="conv-box">
+                    <input
+                      id="convBaseInput"
+                      type="number"
+                      inputmode="decimal"
+                      min="0"
+                      step="any"
+                      value="100"
+                      placeholder="--"
+                      data-i18n-aria="converter.baseAria"
+                      aria-label="输入基准币种金额"
+                    />
+                    <span class="conv-code" id="convBaseCode">USD</span>
+                  </label>
+                  <span class="conv-arrow" aria-hidden="true">⇄</span>
+                  <label class="conv-box">
+                    <input
+                      id="convQuoteInput"
+                      type="number"
+                      inputmode="decimal"
+                      min="0"
+                      step="any"
+                      placeholder="--"
+                      data-i18n-aria="converter.quoteAria"
+                      aria-label="输入目标币种金额"
+                    />
+                    <span class="conv-code" id="convQuoteCode">CNY</span>
+                  </label>
+                </div>
+              </div>
+
+              <div
+                class="conv-presets"
+                id="convPresets"
+                role="group"
+                data-i18n-aria="converter.presetsAria"
+                aria-label="快捷换算金额"
+              >
+                <button type="button" data-amount="100">100</button>
+                <button type="button" data-amount="1000">1K</button>
+                <button type="button" data-amount="10000">10K</button>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <footer class="site-footer">
+        <span data-i18n="footer.source">
+          实时源：Yahoo Finance（Cloudflare Worker 代理）· 历史回退：Frankfurter (ECB)
+        </span>
+        <span data-i18n="footer.note">
+          提示：人民币实时价为离岸参考（CNH-tracking），行情略有延迟
+        </span>
+        <span class="footer-link">
+          <span data-i18n="footer.projectLabel">GitHub</span>
+          <a
+            href="https://github.com/hakupao/ExchangeAtlas"
+            target="_blank"
+            rel="noreferrer"
+            >hakupao/ExchangeAtlas</a
+          >
+        </span>
+      </footer>
+    </main>
   </body>
 </html>
