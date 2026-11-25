@@ -10,12 +10,7 @@
 [![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?style=flat-square&logo=chartdotjs&logoColor=white)](https://www.chartjs.org/)
 [![ES2023](https://img.shields.io/badge/ES2023-支持-success?style=flat-square)](https://tc39.es/ecma262/)
 [![Frankfurter API](https://img.shields.io/badge/Frankfurter-免费API-blue?style=flat-square)](https://www.frankfurter.app/)
-[![双语支持](https://img.shields.io/badge/双语-中英-success?style=flat-square)](https://exchange.bojiang.org
-
-<div align="center">
-  <img src="assets/preview-home.png" alt="ExchangeAtlas 预览" width="700"/>
-</div>
-)
+[![双语支持](https://img.shields.io/badge/双语-中英-success?style=flat-square)](https://exchange.bojiang.org)
 [![在线演示](https://img.shields.io/badge/在线-exchange.bojiang.org-green?style=flat-square)](https://exchange.bojiang.org)
 
 **实时监控6大货币对 · 精美交互图表 · 免费隐私API**
@@ -68,6 +63,12 @@
 ## 🌐 在线演示
 
 访问 **[exchange.bojiang.org](https://exchange.bojiang.org)** 立即使用。
+
+<div align="center">
+  <img src="assets/preview-home.png" alt="ExchangeAtlas 陶瓷浅灰预览" width="760"/>
+  <br /><br />
+  <img src="assets/preview-dark.png" alt="ExchangeAtlas 阳极暗灰预览" width="760"/>
+</div>
 
 ---
 

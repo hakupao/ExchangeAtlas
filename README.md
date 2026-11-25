@@ -65,7 +65,9 @@ Existing currency apps? Bloated, ad-ridden, collecting your data. So I built **E
 Visit **[exchange.bojiang.org](https://exchange.bojiang.org)** to use it now.
 
 <div align="center">
-  <img src="assets/preview-home.png" alt="ExchangeAtlas Preview" width="700"/>
+  <img src="assets/preview-home.png" alt="ExchangeAtlas Light Finish Preview" width="760"/>
+  <br /><br />
+  <img src="assets/preview-dark.png" alt="ExchangeAtlas Dark Finish Preview" width="760"/>
 </div>
 
 
