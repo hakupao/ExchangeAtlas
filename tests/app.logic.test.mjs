@@ -590,3 +590,56 @@ test("Task 5: setupThemeToggle switches meta color-scheme, reverts to system on 
   assert.equal(metaEl.content, "dark");
   assert.equal(chartThemeCalls, 4);
 });
+
+test("Task 6: updateChart discards stale out-of-order responses when user switches pairs rapidly", async () => {
+  const statHigh = createFakeElement("strong");
+  const statLow = createFakeElement("strong");
+  const statDelta = createFakeElement("strong");
+  const statSource = createFakeElement("span");
+  const chartMeta = createFakeElement("div");
+
+  const { App } = loadScripts(["app.core.js", "app.i18n.js", "app.chart.js"], {
+    elements: { statHigh, statLow, statDelta, statSource, chartMeta },
+  });
+
+  const resolvers = new Map();
+  App.fetchHistoryFromWorker = (pair) =>
+    new Promise((resolve) => {
+      resolvers.set(pair.id, resolve);
+    });
+
+  const renderedPairs = [];
+  App.renderChart = (_labels, _values, pair) => {
+    renderedPairs.push(pair.id);
+  };
+
+  // Start slow request for JPY_CNY
+  App.state.chartPairId = "JPY_CNY";
+  const req1 = App.updateChart();
+
+  // Immediately switch to USD_CNY before JPY_CNY finishes
+  App.state.chartPairId = "USD_CNY";
+  const req2 = App.updateChart();
+
+  // USD_CNY finishes first
+  resolvers.get("USD_CNY")({
+    labels: ["2026-11-01", "2026-11-25"],
+    values: [6.65, 6.66],
+    intraday: false,
+    source: "yahoo",
+  });
+  await req2;
+
+  // Stale JPY_CNY finishes second -> MUST be ignored
+  resolvers.get("JPY_CNY")({
+    labels: ["2026-11-01", "2026-11-25"],
+    values: [4.17, 4.25],
+    intraday: false,
+    source: "yahoo",
+  });
+  await req1;
+
+  assert.deepEqual(renderedPairs, ["USD_CNY"]);
+  assert.equal(statHigh.textContent, "6.66");
+  assert.equal(statLow.textContent, "6.65");
+});

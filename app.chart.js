@@ -293,7 +293,9 @@
               display: false,
             },
             ticks: {
-              maxTicksLimit: 6,
+              maxTicksLimit: (window.innerWidth || 1024) < 520 ? 4 : 6,
+              maxRotation: 0,
+              autoSkipPadding: 14,
               color: tokens.tick,
               font: {
                 family: '"IBM Plex Mono", monospace',
@@ -367,6 +369,8 @@
     return { labels, values, intraday: false, source: "frankfurter" };
   };
 
+  let chartRequestSeq = 0;
+
   // opts.live = true → silent in-place refresh of the intraday line (called by
   // the poll loop). Otherwise a full (re)draw triggered by user interaction.
   App.updateChart = async (opts = {}) => {
@@ -381,6 +385,7 @@
     if (!range) {
       return;
     }
+    const reqId = ++chartRequestSeq;
     const rangeLabel = App.getRangeLabel(range.id);
 
     if (!live) {
@@ -399,13 +404,27 @@
           result = null;
         }
       }
+      if (reqId !== chartRequestSeq) {
+        return;
+      }
       if (!result && !range.intraday) {
         result = await App.fetchHistoryFromFrankfurter(pair, range);
       }
     } catch (error) {
+      if (reqId !== chartRequestSeq) {
+        return;
+      }
       if (!live) {
         App.setChartStatus(App.t("status.chartError"));
       }
+      return;
+    }
+
+    if (
+      reqId !== chartRequestSeq ||
+      App.state.chartPairId !== pair.id ||
+      App.state.rangeId !== range.id
+    ) {
       return;
     }
 
