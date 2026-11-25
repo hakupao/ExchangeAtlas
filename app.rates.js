@@ -1,80 +1,183 @@
 (() => {
   const App = window.ExchangeApp || (window.ExchangeApp = {});
 
+  const createEl = (tag, className, text) => {
+    const el = document.createElement(tag);
+    if (className) el.className = className;
+    if (text !== undefined) el.textContent = text;
+    return el;
+  };
+
   App.setupRateCards = () => {
     if (!App.dom.ratesGrid) {
       return;
     }
     App.dom.ratesGrid.innerHTML = "";
-    App.PAIRS.forEach((pair, index) => {
-      const card = document.createElement("article");
-      card.className = "rate-card";
-      card.style.animationDelay = `${index * 70}ms`;
-      const displayAmount = App.getDisplayAmount(pair);
-      const offshoreBadge = App.isOffshorePair(pair)
-        ? `<span class="offshore-badge" title="${App.t(
-            "card.offshoreTip"
-          )}">${App.t("card.offshore")}</span>`
-        : "";
+    App.rateElements.clear();
 
-      card.innerHTML = `
-        <div class="pair">
-          <span>${pair.base}</span>
-          <span>→</span>
-          <span>${pair.quote}</span>
-          ${offshoreBadge}
-        </div>
-        <div class="rate-value" id="rate-${pair.id}" aria-live="polite">--</div>
-        <div class="rate-change" id="rate-change-${pair.id}"></div>
-        <div class="rate-sub">
-          ${displayAmount} ${pair.base} = <span id="rate-text-${pair.id}">--</span> ${pair.quote}
-        </div>
-        <div class="rate-meta" id="rate-date-${pair.id}">
-          ${App.t("card.baseDate", { date: "--" })}
-        </div>
-        <div class="card-actions">
-          <button
-            class="ghost-button"
-            data-pair="${pair.id}"
-            type="button"
-            data-i18n="card.view"
-          >
-            ${App.t("card.view")}
-          </button>
-        </div>
-      `;
+    App.PAIRS.forEach((pair) => {
+      const button = createEl("button", "channel-key");
+      button.type = "button";
+      button.dataset.pair = pair.id;
+      button.setAttribute("aria-pressed", "false");
 
-      App.dom.ratesGrid.appendChild(card);
+      const left = createEl("div", "channel-key-left");
+      const led = createEl("span", "channel-led");
+      led.setAttribute("aria-hidden", "true");
 
-      const button = card.querySelector("button");
+      const info = createEl("div", "channel-info");
+      const pairRow = createEl("div", "channel-pair");
+      const pairText = createEl("span", "", App.getDatasetLabel(pair));
+      pairRow.appendChild(pairText);
+
+      let badge = null;
+      if (App.isOffshorePair(pair)) {
+        badge = createEl("span", "offshore-badge", App.t("card.offshore"));
+        badge.setAttribute("title", App.t("card.offshoreTip"));
+        pairRow.appendChild(badge);
+      }
+
+      const nameEl = createEl("div", "channel-name", App.t(`pairs.${pair.id}`));
+      info.appendChild(pairRow);
+      info.appendChild(nameEl);
+
+      left.appendChild(led);
+      left.appendChild(info);
+
+      const right = createEl("div", "channel-key-right");
+      const valueEl = createEl("div", "rate-value", "--");
+      valueEl.id = `rate-${pair.id}`;
+      valueEl.setAttribute("aria-live", "polite");
+
+      const changeEl = createEl("div", "rate-change", "");
+      changeEl.id = `rate-change-${pair.id}`;
+
+      const metaEl = createEl("div", "rate-meta-inline", "");
+      metaEl.id = `rate-meta-${pair.id}`;
+      metaEl.style.display = "none";
+
+      right.appendChild(valueEl);
+      right.appendChild(changeEl);
+      right.appendChild(metaEl);
+
+      button.appendChild(left);
+      button.appendChild(right);
+      App.dom.ratesGrid.appendChild(button);
+
       App.rateElements.set(pair.id, {
-        value: card.querySelector(`#rate-${pair.id}`),
-        change: card.querySelector(`#rate-change-${pair.id}`),
-        text: card.querySelector(`#rate-text-${pair.id}`),
-        date: card.querySelector(`#rate-date-${pair.id}`),
         button,
+        name: nameEl,
+        badge,
+        value: valueEl,
+        change: changeEl,
+        meta: metaEl,
       });
 
       button.addEventListener("click", () => {
-        App.setChartPair(pair.id);
-        App.scrollToHistory();
+        if (typeof App.setChartPair === "function") {
+          App.setChartPair(pair.id);
+        }
       });
+    });
+
+    App.syncActiveChannel();
+  };
+
+  App.refreshChannelLabels = () => {
+    App.PAIRS.forEach((pair) => {
+      const elements = App.rateElements.get(pair.id);
+      if (!elements) return;
+      if (elements.name) {
+        elements.name.textContent = App.t(`pairs.${pair.id}`);
+      }
+      if (elements.badge) {
+        elements.badge.textContent = App.t("card.offshore");
+        elements.badge.setAttribute("title", App.t("card.offshoreTip"));
+      }
+    });
+  };
+
+  App.syncActiveChannel = () => {
+    App.PAIRS.forEach((pair) => {
+      const elements = App.rateElements.get(pair.id);
+      if (!elements || !elements.button) return;
+      const isActive = pair.id === App.state.chartPairId;
+      elements.button.classList.toggle("active", isActive);
+      elements.button.setAttribute("aria-pressed", String(isActive));
     });
   };
 
   // Briefly flash a value green (up) / red (down) when it changes, like Google Finance.
   App.flashRate = (el, direction) => {
-    if (!el) {
+    if (!el || !direction) {
       return;
     }
     el.classList.remove("up", "down");
-    // Force reflow so the animation restarts even on consecutive ticks.
     void el.offsetWidth;
     el.classList.add(direction);
     window.clearTimeout(el._flashTimer);
     el._flashTimer = window.setTimeout(() => {
       el.classList.remove(direction);
     }, 900);
+  };
+
+  const formatDeltaInfo = (quote) => {
+    if (
+      quote &&
+      typeof quote.prev === "number" &&
+      quote.prev > 0 &&
+      typeof quote.rate === "number" &&
+      Number.isFinite(quote.rate)
+    ) {
+      const pct = ((quote.rate - quote.prev) / quote.prev) * 100;
+      const up = pct >= 0;
+      return {
+        text: `${up ? "▲" : "▼"} ${up ? "+" : ""}${pct.toFixed(2)}%`,
+        up,
+      };
+    }
+    return null;
+  };
+
+  App.renderActiveReadout = (opts = {}) => {
+    const pair = App.pairById.get(App.state.chartPairId);
+    if (!pair) return;
+
+    const quote = App.state.lastQuotes[pair.id] || null;
+    const tag = App.isOffshorePair(pair)
+      ? App.t("instrument.offshoreTag")
+      : App.t("instrument.spotTag");
+
+    if (App.dom.screenChannel) {
+      App.dom.screenChannel.textContent = `${pair.ch} · ${App.getDatasetLabel(
+        pair
+      )} · ${tag}`;
+    }
+
+    if (App.dom.screenPrice) {
+      if (quote && typeof quote.rate === "number") {
+        App.dom.screenPrice.textContent = App.formatRate(
+          App.scaleRateForDisplay(quote.rate, pair)
+        );
+        if (opts && opts.flashDirection) {
+          App.flashRate(App.dom.screenPrice, opts.flashDirection);
+        }
+      } else {
+        App.dom.screenPrice.textContent = "--";
+      }
+    }
+
+    if (App.dom.screenDelta) {
+      const delta = formatDeltaInfo(quote);
+      if (delta) {
+        App.dom.screenDelta.textContent = delta.text;
+        App.dom.screenDelta.classList.toggle("up", delta.up);
+        App.dom.screenDelta.classList.toggle("down", !delta.up);
+      } else {
+        App.dom.screenDelta.textContent = "";
+        App.dom.screenDelta.classList.remove("up", "down");
+      }
+    }
   };
 
   // ---- Data sources -------------------------------------------------------
@@ -120,61 +223,72 @@
   // ---- Rendering ----------------------------------------------------------
 
   App.renderLiveRates = (data) => {
+    let activeFlashDirection = null;
+
     App.PAIRS.forEach((pair) => {
       const quote = data.pairs ? data.pairs[pair.id] : null;
       const elements = App.rateElements.get(pair.id);
       if (!quote || !elements || quote.rate == null) {
         return;
       }
-      const pairObj = App.pairById.get(pair.id);
+
+      App.state.lastQuotes[pair.id] = quote;
+
       const displayValue = App.formatRate(
-        App.scaleRateForDisplay(quote.rate, pairObj)
+        App.scaleRateForDisplay(quote.rate, pair)
       );
 
       // Flash on tick.
       const prevTick = App.lastRates[pair.id];
+      let direction = null;
       if (typeof prevTick === "number" && quote.rate !== prevTick) {
-        App.flashRate(elements.value, quote.rate > prevTick ? "up" : "down");
+        direction = quote.rate > prevTick ? "up" : "down";
+        App.flashRate(elements.value, direction);
+        if (pair.id === App.state.chartPairId) {
+          activeFlashDirection = direction;
+        }
       }
       App.lastRates[pair.id] = quote.rate;
 
       elements.value.textContent = displayValue;
-      elements.text.textContent = displayValue;
 
-      // Day change vs previous close (Google-Finance-style colored %).
+      // Day change vs previous close (colored % + directional triangle).
+      const delta = formatDeltaInfo(quote);
       if (elements.change) {
-        if (
-          typeof quote.prev === "number" &&
-          quote.prev > 0 &&
-          typeof quote.rate === "number"
-        ) {
-          const pct = ((quote.rate - quote.prev) / quote.prev) * 100;
-          const up = pct >= 0;
-          elements.change.textContent = `${up ? "▲" : "▼"} ${
-            up ? "+" : ""
-          }${pct.toFixed(2)}%`;
-          elements.change.classList.toggle("up", up);
-          elements.change.classList.toggle("down", !up);
+        if (delta) {
+          elements.change.textContent = delta.text;
+          elements.change.classList.toggle("up", delta.up);
+          elements.change.classList.toggle("down", !delta.up);
           elements.change.style.display = "";
         } else {
           elements.change.textContent = "";
+          elements.change.classList.remove("up", "down");
           elements.change.style.display = "none";
         }
       }
 
-      // Meta line: daily base date (fallback) / market closed / live.
-      if (elements.date) {
+      // Meta line shown only for daily fallback base date or market-closed state.
+      if (elements.meta) {
         if (quote.date) {
-          elements.date.textContent = App.t("card.baseDate", {
+          elements.meta.textContent = App.t("card.baseDate", {
             date: quote.date,
           });
+          elements.meta.style.display = "";
         } else if (quote.state && quote.state !== "REGULAR") {
-          elements.date.textContent = App.t("status.marketClosed");
+          elements.meta.textContent = App.t("status.marketClosed");
+          elements.meta.style.display = "";
         } else {
-          elements.date.textContent = App.t("card.live");
+          elements.meta.textContent = "";
+          elements.meta.style.display = "none";
         }
       }
     });
+
+    App.renderActiveReadout({ flashDirection: activeFlashDirection });
+
+    if (typeof App.refreshConverterFromRate === "function") {
+      App.refreshConverterFromRate();
+    }
 
     const now = new Date();
     if (App.dom.lastUpdated) {
@@ -189,27 +303,35 @@
   };
 
   App.updateLiveRates = async () => {
-    App.setLiveStatus(App.t("status.loading"));
+    if (App.dom.refreshBtn) {
+      App.dom.refreshBtn.classList.add("is-loading");
+    }
     let data = null;
 
-    if (App.isLiveConfigured()) {
-      try {
-        data = await App.fetchLiveFromWorker();
-      } catch (error) {
-        data = null; // fall through to Frankfurter
+    try {
+      if (App.isLiveConfigured()) {
+        try {
+          data = await App.fetchLiveFromWorker();
+        } catch (error) {
+          data = null; // fall through to Frankfurter
+        }
+      }
+
+      if (!data) {
+        try {
+          data = await App.fetchLiveFromFrankfurter();
+        } catch (error) {
+          App.setLiveStatus(App.t("status.liveError"));
+          return;
+        }
+      }
+
+      App.renderLiveRates(data);
+      App.setLiveStatus("");
+    } finally {
+      if (App.dom.refreshBtn) {
+        App.dom.refreshBtn.classList.remove("is-loading");
       }
     }
-
-    if (!data) {
-      try {
-        data = await App.fetchLiveFromFrankfurter();
-      } catch (error) {
-        App.setLiveStatus(App.t("status.liveError"));
-        return;
-      }
-    }
-
-    App.renderLiveRates(data);
-    App.setLiveStatus("");
   };
 })();

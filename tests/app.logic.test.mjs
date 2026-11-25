@@ -323,3 +323,79 @@ test("Task 2: index.html and styles.css satisfy Braun instrument DOM, FOUC, and 
   assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)/);
   assert.match(css, /--chart-line:/);
 });
+
+test("Task 3: setupRateCards, syncActiveChannel, and renderLiveRates handle Worker and Frankfurter fallback payloads", () => {
+  const ratesGrid = createFakeElement("div");
+  const lastUpdated = createFakeElement("span");
+  const screenChannel = createFakeElement("div");
+  const screenPrice = createFakeElement("span");
+  const screenDelta = createFakeElement("span");
+
+  const { App } = loadScripts(["app.core.js", "app.i18n.js", "app.rates.js"], {
+    elements: {
+      ratesGrid,
+      lastUpdated,
+      screenChannel,
+      screenPrice,
+      screenDelta,
+    },
+  });
+
+  assert.equal(typeof App.syncActiveChannel, "function");
+  assert.equal(typeof App.renderActiveReadout, "function");
+
+  let converterRefreshed = 0;
+  App.refreshConverterFromRate = () => {
+    converterRefreshed += 1;
+  };
+
+  App.setupRateCards();
+  assert.equal(ratesGrid.children.length, 6);
+  assert.equal(ratesGrid.children[0].tagName, "BUTTON");
+
+  App.syncActiveChannel();
+  assert.equal(ratesGrid.children[0].classList.contains("active"), true);
+  assert.equal(ratesGrid.children[0].getAttribute("aria-pressed"), "true");
+  assert.equal(ratesGrid.children[1].classList.contains("active"), false);
+
+  // Worker payload with prev close
+  App.renderLiveRates({
+    asOf: Date.now(),
+    source: "yahoo",
+    pairs: {
+      USD_CNY: { rate: 6.9102, prev: 6.8978, state: "REGULAR" },
+      JPY_CNY: { rate: 0.04329, prev: 0.04325, state: "REGULAR" },
+    },
+  });
+
+  assert.equal(App.lastRates.USD_CNY, 6.9102);
+  assert.equal(App.lastRates.JPY_CNY, 0.04329);
+  assert.equal(App.state.lastQuotes.USD_CNY.rate, 6.9102);
+  assert.equal(App.rateElements.get("USD_CNY").value.textContent, "6.9102");
+  assert.equal(App.rateElements.get("JPY_CNY").value.textContent, "4.329");
+  assert.match(App.rateElements.get("USD_CNY").change.textContent, /^▲ \+0\.18%$/);
+  assert.equal(screenPrice.textContent, "6.9102");
+  assert.match(screenDelta.textContent, /^▲ \+0\.18%$/);
+  assert.match(screenChannel.textContent, /CH-01/);
+  assert.ok(converterRefreshed >= 1);
+
+  // Frankfurter fallback payload (prev: null, date present)
+  App.state.chartPairId = "JPY_CNY";
+  App.syncActiveChannel();
+  assert.equal(ratesGrid.children[3].classList.contains("active"), true);
+
+  App.renderLiveRates({
+    asOf: Date.now(),
+    source: "frankfurter",
+    pairs: {
+      JPY_CNY: { rate: 0.0435, prev: null, date: "2026-11-24", source: "frankfurter" },
+    },
+  });
+
+  assert.equal(App.lastRates.JPY_CNY, 0.0435);
+  assert.equal(App.rateElements.get("JPY_CNY").value.textContent, "4.35");
+  assert.equal(App.rateElements.get("JPY_CNY").change.style.display, "none");
+  assert.match(App.rateElements.get("JPY_CNY").meta.textContent, /2026-11-24/);
+  assert.equal(screenPrice.textContent, "4.35");
+  assert.equal(screenDelta.textContent, "");
+});
