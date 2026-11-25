@@ -9,16 +9,16 @@
   // automatically falls back to Frankfurter if this is unset or the Worker is down.
   App.LIVE_API_BASE = "https://exchangeatlas-rates.bojiang.workers.dev";
 
-  // Last raw rate per pair, used to flash the value up/down on each tick.
+  // Last raw 1-unit rate per pair, used for tick flash & exact quick conversion.
   App.lastRates = {};
 
   App.PAIRS = [
-    { id: "USD_CNY", base: "USD", quote: "CNY" },
-    { id: "USD_JPY", base: "USD", quote: "JPY" },
-    { id: "CNY_JPY", base: "CNY", quote: "JPY" },
-    { id: "JPY_CNY", base: "JPY", quote: "CNY" },
-    { id: "AUD_CNY", base: "AUD", quote: "CNY" },
-    { id: "AUD_JPY", base: "AUD", quote: "JPY" },
+    { id: "USD_CNY", ch: "CH-01", base: "USD", quote: "CNY" },
+    { id: "USD_JPY", ch: "CH-02", base: "USD", quote: "JPY" },
+    { id: "CNY_JPY", ch: "CH-03", base: "CNY", quote: "JPY" },
+    { id: "JPY_CNY", ch: "CH-04", base: "JPY", quote: "CNY" },
+    { id: "AUD_CNY", ch: "CH-05", base: "AUD", quote: "CNY" },
+    { id: "AUD_JPY", ch: "CH-06", base: "AUD", quote: "JPY" },
   ];
 
   // Each preset carries the Yahoo params used by the realtime chart (via the
@@ -41,7 +41,14 @@
     rangeId: "30d",
     chart: null,
     chartKey: null, // "<pairId>:<rangeId>" of the currently drawn chart
+    lastChartData: null, // { labels, values, pair, source } for instant theme redraw
+    lastQuotes: {}, // pairId -> latest quote payload
     language: "zh",
+    converter: {
+      side: "base",
+      baseAmount: "100",
+      quoteAmount: "",
+    },
   };
 
   App.getDisplayAmount = (pair) => {
@@ -82,14 +89,23 @@
     liveStatus: document.getElementById("liveStatus"),
     ratesGrid: document.getElementById("ratesGrid"),
     refreshBtn: document.getElementById("refreshRates"),
-    pairSelect: document.getElementById("pairSelect"),
-    rangeButtons: document.getElementById("rangeButtons"),
-    updateChartBtn: document.getElementById("updateChart"),
-    chartTitle: document.getElementById("chartTitle"),
-    chartMeta: document.getElementById("chartMeta"),
-    chartLegend: document.getElementById("chartLegend"),
-    chartStatus: document.getElementById("chartStatus"),
+    themeToggle: document.getElementById("themeToggle"),
     langSwitch: document.getElementById("langSwitch"),
+    rangeButtons: document.getElementById("rangeButtons"),
+    screenChannel: document.getElementById("screenChannel"),
+    screenPrice: document.getElementById("screenPrice"),
+    screenDelta: document.getElementById("screenDelta"),
+    chartMeta: document.getElementById("chartMeta"),
+    chartStatus: document.getElementById("chartStatus"),
+    statHigh: document.getElementById("statHigh"),
+    statLow: document.getElementById("statLow"),
+    statDelta: document.getElementById("statDelta"),
+    statSource: document.getElementById("statSource"),
+    convBaseInput: document.getElementById("convBaseInput"),
+    convQuoteInput: document.getElementById("convQuoteInput"),
+    convBaseCode: document.getElementById("convBaseCode"),
+    convQuoteCode: document.getElementById("convQuoteCode"),
+    convPresets: document.getElementById("convPresets"),
   };
   App.dom.langButtons = App.dom.langSwitch
     ? Array.from(App.dom.langSwitch.querySelectorAll("button"))
@@ -134,6 +150,81 @@
       minimumFractionDigits: 0,
       maximumFractionDigits: App.getRatePrecision(normalized),
     });
+  };
+
+  // Pure helper: period high, low, and % change across a numeric series.
+  App.computePeriodStats = (values) => {
+    if (!Array.isArray(values) || values.length === 0) {
+      return null;
+    }
+    const numeric = values.filter(
+      (v) => typeof v === "number" && Number.isFinite(v)
+    );
+    if (numeric.length === 0) {
+      return null;
+    }
+    let high = numeric[0];
+    let low = numeric[0];
+    for (let i = 1; i < numeric.length; i += 1) {
+      if (numeric[i] > high) high = numeric[i];
+      if (numeric[i] < low) low = numeric[i];
+    }
+    const first = numeric[0];
+    const last = numeric[numeric.length - 1];
+    const pctChange =
+      numeric.length > 1 && first > 0 ? ((last - first) / first) * 100 : 0;
+    return { high, low, pctChange };
+  };
+
+  // Pure helper: exact bidirectional currency conversion using raw 1-unit rate.
+  App.convertAmount = (amount, rawUnitRate, direction = "baseToQuote") => {
+    if (
+      typeof amount !== "number" ||
+      !Number.isFinite(amount) ||
+      amount < 0 ||
+      typeof rawUnitRate !== "number" ||
+      !Number.isFinite(rawUnitRate) ||
+      rawUnitRate <= 0
+    ) {
+      return null;
+    }
+    if (amount === 0) {
+      return 0;
+    }
+    const result =
+      direction === "quoteToBase" ? amount / rawUnitRate : amount * rawUnitRate;
+    return Number.isFinite(result) ? result : null;
+  };
+
+  // Pure helper: resolve effective rendered theme from <meta name="color-scheme"> + OS.
+  App.getEffectiveTheme = (metaContent, systemPrefersDark) => {
+    if (metaContent === "dark") return "dark";
+    if (metaContent === "light") return "light";
+    return systemPrefersDark ? "dark" : "light";
+  };
+
+  // Pure helper: two-state theme toggle with OS-revert semantics (no invisible pinning).
+  App.resolveThemeToggle = (storedOverride, systemPrefersDark) => {
+    const current =
+      storedOverride === "dark" || storedOverride === "light"
+        ? storedOverride
+        : systemPrefersDark
+        ? "dark"
+        : "light";
+    const target = current === "dark" ? "light" : "dark";
+    const systemTheme = systemPrefersDark ? "dark" : "light";
+    if (target === systemTheme) {
+      return {
+        nextStored: null,
+        metaContent: "light dark",
+        effective: target,
+      };
+    }
+    return {
+      nextStored: target,
+      metaContent: target,
+      effective: target,
+    };
   };
 
   App.formatDate = (date) => {

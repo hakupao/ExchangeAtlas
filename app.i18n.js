@@ -4,63 +4,75 @@
   App.I18N = {
     zh: {
       htmlLang: "zh-CN",
-      title: "汇率观测站 | 实时汇率",
-      eyebrow: "实时汇率 · 每 15 秒刷新",
-      headline: "汇率观测站",
-      subhead:
-        "关注 USD/CNY、AUD/JPY 等 6 组热门币种对。实时获取最新价，并查看近几天、几个月、几年的趋势曲线。",
-      metrics: {
-        pairsLabel: "覆盖币种对",
-        pairsValue: "6",
-        spanLabel: "历史跨度",
-        spanValue: "3 年",
-        sourceLabel: "数据来源",
-        sourceValue: "Yahoo · Frankfurter",
+      title: "Exchange Atlas | 汇率观测仪",
+      instrument: {
+        subtitle: "汇率观测仪 · FX-06",
+        liveTag: "15S 实时",
+        channelsLabel: "汇率通道列表",
+        spotTag: "即期",
+        offshoreTag: "CNH 离岸",
       },
-      sections: {
-        liveTitle: "实时汇率",
-        liveSubtitle: "点击卡片即可快速切换到对应走势。",
-        historyTitle: "历史走势",
-        historySubtitle: "可查看近几天、近几个月、近几年的折线图。",
+      pairs: {
+        USD_CNY: "美元兑人民币",
+        USD_JPY: "美元兑日元",
+        CNY_JPY: "人民币兑日元",
+        JPY_CNY: "100 日元兑人民币",
+        AUD_CNY: "澳元兑人民币",
+        AUD_JPY: "澳元兑日元",
       },
       controls: {
         refresh: "刷新",
-        updateChart: "更新图表",
-        pairLabel: "币种对",
+        refreshAria: "手动刷新实时汇率",
         rangeLabel: "时间范围",
       },
+      theme: {
+        toDark: "切换至阳极暗灰涂装",
+        toLight: "切换至陶瓷浅灰涂装",
+      },
       status: {
-        updating: "更新中...",
+        updating: "同步中...",
         loading: "加载中...",
-        liveError: "实时汇率获取失败，请稍后重试。",
-        chartError: "图表加载失败，请稍后重试。",
+        liveError: "实时汇率获取失败",
+        chartError: "图表加载失败，请重试",
         empty: "暂无数据",
-        updated: "更新时间: {time}",
+        updated: "{time}",
         marketClosed: "休市中",
       },
       chart: {
-        prompt: "请选择范围查看走势",
+        prompt: "选择时间范围查看走势",
         legend: "{amount} {base} 兑 {quote}",
         range: "{range} · {start} 至 {end}",
       },
+      stats: {
+        high: "区间高",
+        low: "区间低",
+        delta: "区间涨跌",
+        sourceYahoo: "Yahoo 实时",
+        sourceEcb: "ECB 日参考",
+      },
+      converter: {
+        label: "换算",
+        baseAria: "输入基准币种金额",
+        quoteAria: "输入目标币种金额",
+        presetsAria: "快捷换算金额",
+      },
       range: {
         "1d": "今日",
-        "7d": "近7天",
-        "30d": "近30天",
-        "6m": "近6个月",
-        "1y": "近1年",
-        "3y": "近3年",
+        "7d": "7天",
+        "30d": "30天",
+        "6m": "6月",
+        "1y": "1年",
+        "3y": "3年",
       },
       footer: {
-        source: "实时源：Yahoo Finance（经 Cloudflare Worker 代理）· 历史源：Frankfurter",
-        note: "提示：人民币为离岸参考价（CNH-tracking），行情有延迟；历史曲线为 ECB 在岸日参考价",
-        projectLabel: "项目地址",
+        source: "实时源：Yahoo Finance（Cloudflare Worker 代理）· 历史回退：Frankfurter (ECB)",
+        note: "提示：人民币实时价为离岸参考（CNH-tracking），行情略有延迟",
+        projectLabel: "GitHub",
       },
       card: {
-        baseDate: "基准日: {date}",
-        view: "查看走势",
-        live: "实时 · 延迟行情",
-        offshore: "离岸",
+        baseDate: "基准日 {date}",
+        live: "实时",
+        offshore: "CNH",
         offshoreTip: "免费源提供的是离岸人民币（CNH-tracking）参考价，非央行在岸中间价",
       },
       language: {
@@ -69,63 +81,75 @@
     },
     en: {
       htmlLang: "en",
-      title: "Exchange Atlas | Live FX",
-      eyebrow: "Live FX · refreshes every 15s",
-      headline: "Exchange Atlas",
-      subhead:
-        "Track USD/CNY, AUD/JPY, and 6 key currency pairs. Get live quotes and trend lines across days, months, and years.",
-      metrics: {
-        pairsLabel: "Pairs covered",
-        pairsValue: "6",
-        spanLabel: "History span",
-        spanValue: "3 years",
-        sourceLabel: "Data source",
-        sourceValue: "Yahoo · Frankfurter",
+      title: "Exchange Atlas | FX Monitor",
+      instrument: {
+        subtitle: "FX MONITOR · FX-06",
+        liveTag: "15S LIVE",
+        channelsLabel: "Currency channels",
+        spotTag: "SPOT",
+        offshoreTag: "CNH OFFSHORE",
       },
-      sections: {
-        liveTitle: "Live Rates",
-        liveSubtitle: "Tap a card to jump to its trend.",
-        historyTitle: "History Trends",
-        historySubtitle: "See line charts for days, months, or years.",
+      pairs: {
+        USD_CNY: "US Dollar / Yuan",
+        USD_JPY: "US Dollar / Yen",
+        CNY_JPY: "Yuan / Yen",
+        JPY_CNY: "100 Yen / Yuan",
+        AUD_CNY: "Australian Dollar / Yuan",
+        AUD_JPY: "Australian Dollar / Yen",
       },
       controls: {
-        refresh: "Refresh",
-        updateChart: "Update chart",
-        pairLabel: "Currency pair",
+        refresh: "Sync",
+        refreshAria: "Refresh live exchange rates",
         rangeLabel: "Time range",
       },
+      theme: {
+        toDark: "Switch to Anodized Slate dark finish",
+        toLight: "Switch to Ceramic Ivory light finish",
+      },
       status: {
-        updating: "Updating...",
+        updating: "Syncing...",
         loading: "Loading...",
-        liveError: "Live rates failed to load. Please try again.",
-        chartError: "Chart failed to load. Please try again.",
-        empty: "No data yet.",
-        updated: "Updated: {time}",
-        marketClosed: "Market closed",
+        liveError: "Live feed unavailable",
+        chartError: "Chart failed to load",
+        empty: "No data",
+        updated: "{time}",
+        marketClosed: "Closed",
       },
       chart: {
-        prompt: "Select a range to view the trend",
+        prompt: "Select a range to inspect trend",
         legend: "{amount} {base} to {quote}",
         range: "{range} · {start} to {end}",
       },
+      stats: {
+        high: "HIGH",
+        low: "LOW",
+        delta: "DELTA",
+        sourceYahoo: "Yahoo Live",
+        sourceEcb: "ECB Daily",
+      },
+      converter: {
+        label: "CONVERT",
+        baseAria: "Enter base currency amount",
+        quoteAria: "Enter quote currency amount",
+        presetsAria: "Quick amount presets",
+      },
       range: {
-        "1d": "Today",
-        "7d": "Last 7 days",
-        "30d": "Last 30 days",
-        "6m": "Last 6 months",
-        "1y": "Last 1 year",
-        "3y": "Last 3 years",
+        "1d": "1D",
+        "7d": "7D",
+        "30d": "30D",
+        "6m": "6M",
+        "1y": "1Y",
+        "3y": "3Y",
       },
       footer: {
-        source: "Live: Yahoo Finance (via Cloudflare Worker) · History: Frankfurter",
-        note: "Note: CNY is an offshore reference (CNH-tracking) and delayed; history uses ECB onshore daily rates",
-        projectLabel: "Project",
+        source: "Live: Yahoo Finance (via Cloudflare Worker) · History fallback: Frankfurter (ECB)",
+        note: "Note: CNY quotes track offshore yuan (CNH) with slight delay",
+        projectLabel: "GitHub",
       },
       card: {
-        baseDate: "Base date: {date}",
-        view: "View trend",
-        live: "Live · delayed",
-        offshore: "Offshore",
+        baseDate: "As of {date}",
+        live: "Live",
+        offshore: "CNH",
         offshoreTip: "Free feeds quote offshore yuan (CNH-tracking), not the PBOC onshore fixing",
       },
       language: {
@@ -199,6 +223,12 @@
     document.querySelectorAll("[data-i18n]").forEach((element) => {
       element.textContent = App.t(element.dataset.i18n);
     });
+    document.querySelectorAll("[data-i18n-title]").forEach((element) => {
+      element.setAttribute("title", App.t(element.dataset.i18nTitle));
+    });
+    document.querySelectorAll("[data-i18n-aria]").forEach((element) => {
+      element.setAttribute("aria-label", App.t(element.dataset.i18nAria));
+    });
     if (App.dom.langSwitch) {
       App.dom.langSwitch.setAttribute("aria-label", App.t("language.label"));
     }
@@ -214,8 +244,15 @@
     try {
       localStorage.setItem("lang", lang);
     } catch (error) {
+      // Ignore storage failures in private/restricted modes.
     }
     App.applyTranslations();
+    if (typeof App.refreshChannelLabels === "function") {
+      App.refreshChannelLabels();
+    }
+    if (typeof App.renderActiveReadout === "function") {
+      App.renderActiveReadout();
+    }
     if (typeof App.updateLiveRates === "function") {
       App.updateLiveRates();
     }
@@ -229,7 +266,9 @@
       return;
     }
     App.dom.langButtons.forEach((button) => {
-      button.addEventListener("click", () => App.setLanguage(button.dataset.lang));
+      button.addEventListener("click", () =>
+        App.setLanguage(button.dataset.lang)
+      );
     });
     App.updateLanguageButtons();
   };
