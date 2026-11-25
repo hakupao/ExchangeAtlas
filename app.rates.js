@@ -291,6 +291,7 @@
     }
 
     const now = new Date();
+    App.state.lastUpdatedAt = now;
     if (App.dom.lastUpdated) {
       App.dom.lastUpdated.textContent = App.t("status.updated", {
         time: now.toLocaleTimeString(App.getLocale(), {

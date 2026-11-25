@@ -202,7 +202,7 @@
     chart.update("none");
   };
 
-  App.renderChart = (labels, values, pair, source = "yahoo") => {
+  App.renderChart = (labels, values, pair, source = "yahoo", rangeId = App.state.rangeId) => {
     const canvas = document.getElementById("rateChart");
     if (!canvas) {
       return;
@@ -212,7 +212,7 @@
       App.state.chart.destroy();
     }
 
-    App.state.lastChartData = { labels, values, pair, source };
+    App.state.lastChartData = { labels, values, pair, rangeId, source };
 
     const tokens = getChartThemeTokens();
     const gradient = makeAreaGradient(ctx, canvas.height || 268, tokens);
@@ -370,11 +370,28 @@
   };
 
   let chartRequestSeq = 0;
+  let pendingManualChartReq = false;
+
+  const clearChartDisplay = () => {
+    if (App.state.chart && typeof App.state.chart.destroy === "function") {
+      App.state.chart.destroy();
+    }
+    App.state.chart = null;
+    App.state.chartKey = null;
+    App.state.lastChartData = null;
+    App.renderPeriodStats([]);
+    if (App.dom.chartMeta) {
+      App.dom.chartMeta.textContent = App.t("chart.prompt");
+    }
+  };
 
   // opts.live = true → silent in-place refresh of the intraday line (called by
   // the poll loop). Otherwise a full (re)draw triggered by user interaction.
   App.updateChart = async (opts = {}) => {
     const live = opts && opts.live === true;
+    if (live && pendingManualChartReq) {
+      return;
+    }
     const pair = App.pairById.get(App.state.chartPairId);
     if (!pair) {
       return;
@@ -386,9 +403,11 @@
       return;
     }
     const reqId = ++chartRequestSeq;
+    const key = `${pair.id}:${range.id}`;
     const rangeLabel = App.getRangeLabel(range.id);
 
     if (!live) {
+      pendingManualChartReq = true;
       if (typeof App.renderActiveReadout === "function") {
         App.renderActiveReadout();
       }
@@ -415,9 +434,16 @@
         return;
       }
       if (!live) {
+        if (App.state.chartKey !== key) {
+          clearChartDisplay();
+        }
         App.setChartStatus(App.t("status.chartError"));
       }
       return;
+    } finally {
+      if (!live && reqId === chartRequestSeq) {
+        pendingManualChartReq = false;
+      }
     }
 
     if (
@@ -430,13 +456,12 @@
 
     if (!result || result.labels.length === 0) {
       if (!live) {
-        App.renderPeriodStats([]);
+        clearChartDisplay();
         App.setChartStatus(App.t("status.empty"));
       }
       return;
     }
 
-    const key = `${pair.id}:${range.id}`;
     if (live && App.state.chart && App.state.chartKey === key) {
       // Extend the existing line in place — no flicker, no re-animation.
       App.state.chart.data.labels = result.labels;
@@ -445,11 +470,12 @@
         labels: result.labels,
         values: result.values,
         pair,
+        rangeId: range.id,
         source: result.source,
       };
       App.state.chart.update("none");
     } else {
-      App.renderChart(result.labels, result.values, pair, result.source);
+      App.renderChart(result.labels, result.values, pair, result.source, range.id);
       App.state.chartKey = key;
     }
 
@@ -462,8 +488,6 @@
         end: result.labels[result.labels.length - 1],
       });
     }
-    if (!live) {
-      App.setChartStatus("");
-    }
+    App.setChartStatus("");
   };
 })();

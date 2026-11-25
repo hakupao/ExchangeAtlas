@@ -643,3 +643,155 @@ test("Task 6: updateChart discards stale out-of-order responses when user switch
   assert.equal(statHigh.textContent, "6.66");
   assert.equal(statLow.textContent, "6.65");
 });
+
+test("Final fix 1: overlapping live intraday poll never leaves chartStatus stuck on loading", async () => {
+  const chartStatus = createFakeElement("span");
+  const statHigh = createFakeElement("strong");
+  const statLow = createFakeElement("strong");
+  const statDelta = createFakeElement("strong");
+  const chartMeta = createFakeElement("div");
+
+  const { App } = loadScripts(["app.core.js", "app.i18n.js", "app.chart.js"], {
+    elements: { chartStatus, statHigh, statLow, statDelta, chartMeta },
+  });
+
+  App.state.rangeId = "1d";
+  const pending = [];
+  App.fetchHistoryFromWorker = () =>
+    new Promise((resolve) => {
+      pending.push(resolve);
+    });
+  App.renderChart = () => {};
+
+  const manualReq = App.updateChart();
+  assert.equal(chartStatus.textContent, "加载中...");
+
+  // 15s poll fires while manual 1d fetch is still in flight
+  const liveReq = App.updateChart({ live: true });
+
+  // Resolve any pending fetches in order
+  while (pending.length) {
+    pending.shift()({
+      labels: ["10:00", "10:05"],
+      values: [6.66, 6.661],
+      intraday: true,
+      source: "yahoo",
+    });
+    await Promise.resolve();
+  }
+  await Promise.all([manualReq, liveReq]);
+
+  assert.equal(chartStatus.textContent, "");
+});
+
+test("Final fix 2: failed or empty non-live chart fetch clears stale previous chart, stats, and meta", async () => {
+  const chartStatus = createFakeElement("span");
+  const statHigh = createFakeElement("strong");
+  const statLow = createFakeElement("strong");
+  const statDelta = createFakeElement("strong");
+  const statSource = createFakeElement("span");
+  const chartMeta = createFakeElement("div");
+
+  const { App } = loadScripts(["app.core.js", "app.i18n.js", "app.chart.js"], {
+    elements: { chartStatus, statHigh, statLow, statDelta, statSource, chartMeta },
+  });
+
+  let destroyed = 0;
+  App.state.chart = {
+    destroy() {
+      destroyed += 1;
+    },
+  };
+  App.state.chartKey = "USD_CNY:30d";
+  App.state.lastChartData = {
+    labels: ["2026-10-26", "2026-11-25"],
+    values: [6.648, 6.688],
+    pair: App.pairById.get("USD_CNY"),
+    source: "yahoo",
+  };
+  statHigh.textContent = "6.688";
+  chartMeta.textContent = "30天 · 2026-10-26 至 2026-11-25";
+
+  // Switch to JPY_CNY and simulate both Worker and Frankfurter failing
+  App.state.chartPairId = "JPY_CNY";
+  App.fetchHistoryFromWorker = async () => {
+    throw new Error("offline");
+  };
+  App.fetchHistoryFromFrankfurter = async () => {
+    throw new Error("offline");
+  };
+
+  await App.updateChart();
+
+  assert.equal(destroyed, 1);
+  assert.equal(App.state.chart, null);
+  assert.equal(App.state.chartKey, null);
+  assert.equal(App.state.lastChartData, null);
+  assert.equal(statHigh.textContent, "--");
+  assert.equal(statLow.textContent, "--");
+  assert.equal(statDelta.textContent, "--");
+  assert.equal(chartMeta.textContent, App.t("chart.prompt"));
+});
+
+test("Final fix 3 & 5: styles.css handles mobile key wrapping and WCAG AA active range contrast", () => {
+  const css = fs.readFileSync(path.join(ROOT, "styles.css"), "utf8");
+
+  // Fix 3: mobile/tablet .channel-key-right wraps and .rate-meta-inline takes full line
+  assert.match(css, /\.channel-key-right\s*\{[^}]*flex-wrap:\s*wrap/);
+  assert.match(css, /\.rate-meta-inline\s*\{[^}]*flex-basis:\s*100%/);
+
+  // Fix 5: WCAG AA contrast tokens for active range button in light & dark finishes
+  assert.match(css, /--light-accent-orange:\s*#c93b12/i);
+  assert.match(css, /--accent-orange-ink:/);
+  assert.match(
+    css,
+    /\.range-well button\.active\s*\{[^}]*color:\s*var\(--accent-orange-ink\)/
+  );
+});
+
+test("Final fix 4: setLanguage preserves formatted lastUpdated and chartMeta instead of resetting to placeholders", () => {
+  const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  assert.doesNotMatch(html, /id="lastUpdated"[^>]*data-i18n=/);
+  assert.doesNotMatch(html, /id="chartMeta"[^>]*data-i18n=/);
+
+  const lastUpdated = createFakeElement("span");
+  const chartMeta = createFakeElement("div");
+  const ratesGrid = createFakeElement("div");
+  const screenChannel = createFakeElement("div");
+  const screenPrice = createFakeElement("span");
+  const screenDelta = createFakeElement("span");
+
+  const { App } = loadScripts(["app.core.js", "app.i18n.js", "app.rates.js"], {
+    elements: {
+      lastUpdated,
+      chartMeta,
+      ratesGrid,
+      screenChannel,
+      screenPrice,
+      screenDelta,
+    },
+  });
+
+  App.setupRateCards();
+  App.renderLiveRates({
+    asOf: Date.now(),
+    source: "yahoo",
+    pairs: { USD_CNY: { rate: 6.6602, prev: 6.6542, state: "REGULAR" } },
+  });
+  App.state.lastChartData = {
+    labels: ["2026-10-26", "2026-11-25"],
+    values: [6.648, 6.688],
+    pair: App.pairById.get("USD_CNY"),
+    rangeId: "30d",
+    source: "yahoo",
+  };
+
+  // Prevent network calls inside unit test
+  App.updateLiveRates = () => {};
+  App.updateChart = () => {};
+
+  App.setLanguage("en");
+  assert.notEqual(lastUpdated.textContent, "Syncing...");
+  assert.match(lastUpdated.textContent, /\d{1,2}:\d{2}/);
+  assert.equal(chartMeta.textContent, "30D · 2026-10-26 to 2026-11-25");
+});

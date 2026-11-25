@@ -41,8 +41,9 @@
     rangeId: "30d",
     chart: null,
     chartKey: null, // "<pairId>:<rangeId>" of the currently drawn chart
-    lastChartData: null, // { labels, values, pair, source } for instant theme redraw
+    lastChartData: null, // { labels, values, pair, rangeId, source } for instant theme/lang redraw
     lastQuotes: {}, // pairId -> latest quote payload
+    lastUpdatedAt: null, // Date instance of latest live rate render
     language: "zh",
     converter: {
       side: "base",

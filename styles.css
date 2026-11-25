@@ -47,8 +47,10 @@
   --light-dial-bg: #ffffff;
   --dark-dial-bg: #22262f;
 
-  --light-accent-orange: #d94318;
+  --light-accent-orange: #c93b12;
   --dark-accent-orange: #ff5c2e;
+  --light-accent-orange-ink: #ffffff;
+  --dark-accent-orange-ink: #17181c;
   --light-up: #147338;
   --dark-up: #4ade80;
   --light-up-on-active: #4ade80;
@@ -82,6 +84,7 @@
   --well-border: var(--light-well-border);
   --dial-bg: var(--light-dial-bg);
   --accent-orange: var(--light-accent-orange);
+  --accent-orange-ink: var(--light-accent-orange-ink);
   --up: var(--light-up);
   --up-on-active: var(--light-up-on-active);
   --dn: var(--light-dn);
@@ -131,6 +134,7 @@
     --well-border: var(--dark-well-border);
     --dial-bg: var(--dark-dial-bg);
     --accent-orange: var(--dark-accent-orange);
+    --accent-orange-ink: var(--dark-accent-orange-ink);
     --up: var(--dark-up);
     --up-on-active: var(--dark-up-on-active);
     --dn: var(--dark-dn);
@@ -178,6 +182,7 @@
   --well-border: var(--dark-well-border);
   --dial-bg: var(--dark-dial-bg);
   --accent-orange: var(--dark-accent-orange);
+  --accent-orange-ink: var(--dark-accent-orange-ink);
   --up: var(--dark-up);
   --up-on-active: var(--dark-up-on-active);
   --dn: var(--dark-dn);
@@ -223,6 +228,7 @@
   --well-border: var(--light-well-border);
   --dial-bg: var(--light-dial-bg);
   --accent-orange: var(--light-accent-orange);
+  --accent-orange-ink: var(--light-accent-orange-ink);
   --up: var(--light-up);
   --up-on-active: var(--light-up-on-active);
   --dn: var(--light-dn);
@@ -268,6 +274,7 @@
     --well-border: light-dark(var(--light-well-border), var(--dark-well-border));
     --dial-bg: light-dark(var(--light-dial-bg), var(--dark-dial-bg));
     --accent-orange: light-dark(var(--light-accent-orange), var(--dark-accent-orange));
+    --accent-orange-ink: light-dark(var(--light-accent-orange-ink), var(--dark-accent-orange-ink));
     --up: light-dark(var(--light-up), var(--dark-up));
     --up-on-active: light-dark(var(--light-up-on-active), var(--dark-up-on-active));
     --dn: light-dark(var(--light-dn), var(--dark-dn));
@@ -879,8 +886,8 @@ body {
 
 .range-well button.active {
   background: var(--accent-orange);
-  color: #ffffff;
-  box-shadow: 0 1px 4px rgba(217, 67, 24, 0.35);
+  color: var(--accent-orange-ink);
+  box-shadow: 0 1px 4px rgba(201, 59, 18, 0.35);
 }
 
 .chart-wrap {
@@ -1162,10 +1169,16 @@ input:focus-visible {
 
   .channel-key-right {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
     justify-content: space-between;
     text-align: left;
-    gap: 6px;
+    gap: 2px 6px;
+  }
+
+  .rate-meta-inline {
+    flex-basis: 100%;
+    text-align: left;
   }
 
   .rate-value {
@@ -1235,8 +1248,15 @@ input:focus-visible {
     gap: 6px;
   }
 
+  .channel-info {
+    overflow: hidden;
+  }
+
   .channel-pair {
     font-size: 0.78rem;
+    flex-wrap: wrap;
+    white-space: normal;
+    row-gap: 2px;
   }
 
   .channel-name {

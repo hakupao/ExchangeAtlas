@@ -232,6 +232,31 @@
     if (App.dom.langSwitch) {
       App.dom.langSwitch.setAttribute("aria-label", App.t("language.label"));
     }
+    if (App.dom.lastUpdated) {
+      if (App.state.lastUpdatedAt instanceof Date) {
+        App.dom.lastUpdated.textContent = App.t("status.updated", {
+          time: App.state.lastUpdatedAt.toLocaleTimeString(App.getLocale(), {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit",
+          }),
+        });
+      } else {
+        App.dom.lastUpdated.textContent = App.t("status.updating");
+      }
+    }
+    if (App.dom.chartMeta) {
+      const cached = App.state.lastChartData;
+      if (cached && Array.isArray(cached.labels) && cached.labels.length > 0) {
+        App.dom.chartMeta.textContent = App.t("chart.range", {
+          range: App.getRangeLabel(cached.rangeId || App.state.rangeId),
+          start: cached.labels[0],
+          end: cached.labels[cached.labels.length - 1],
+        });
+      } else {
+        App.dom.chartMeta.textContent = App.t("chart.prompt");
+      }
+    }
     App.updateRangeButtonsText();
     App.updateLanguageButtons();
   };
