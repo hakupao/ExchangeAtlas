@@ -399,3 +399,81 @@ test("Task 3: setupRateCards, syncActiveChannel, and renderLiveRates handle Work
   assert.equal(screenPrice.textContent, "4.35");
   assert.equal(screenDelta.textContent, "");
 });
+
+test("Task 4: renderPeriodStats computes DOM values and applyChartTheme safely updates or no-ops", () => {
+  const statHigh = createFakeElement("strong");
+  const statLow = createFakeElement("strong");
+  const statDelta = createFakeElement("strong");
+  const statSource = createFakeElement("span");
+
+  const { App } = loadScripts(["app.core.js", "app.i18n.js", "app.chart.js"], {
+    elements: { statHigh, statLow, statDelta, statSource },
+    getComputedStyle: () => ({
+      getPropertyValue: (name) =>
+        ({
+          "--chart-line": "#f2f3f5",
+          "--chart-fill-top": "rgba(255, 92, 46, 0.28)",
+          "--chart-fill-bottom": "rgba(255, 92, 46, 0)",
+          "--chart-grid": "rgba(255, 255, 255, 0.08)",
+          "--chart-tick": "#989da8",
+          "--chart-crosshair": "rgba(242, 243, 245, 0.28)",
+          "--chart-ref-line": "rgba(242, 243, 245, 0.16)",
+          "--chart-tooltip-bg": "#f0efe9",
+          "--chart-tooltip-border": "#d2d1c8",
+          "--chart-tooltip-ink": "#17181c",
+          "--chart-point": "#ff5c2e",
+        }[name] || ""),
+    }),
+  });
+
+  assert.equal(typeof App.renderPeriodStats, "function");
+  assert.equal(typeof App.applyChartTheme, "function");
+
+  App.renderPeriodStats([6.8615, 6.934, 6.9102], "yahoo");
+  assert.equal(statHigh.textContent, "6.934");
+  assert.equal(statLow.textContent, "6.8615");
+  assert.equal(statDelta.textContent, "▲ +0.71%");
+  assert.equal(statDelta.classList.contains("up"), true);
+  assert.equal(statSource.textContent, "Yahoo 实时");
+
+  App.renderPeriodStats([7.0, 6.5], "frankfurter");
+  assert.equal(statDelta.classList.contains("down"), true);
+  assert.match(statDelta.textContent, /^▼ -7\.14%$/);
+  assert.equal(statSource.textContent, "ECB 日参考");
+
+  App.renderPeriodStats([]);
+  assert.equal(statHigh.textContent, "--");
+  assert.equal(statLow.textContent, "--");
+  assert.equal(statDelta.textContent, "--");
+
+  // No-op safely when chart is null
+  assert.doesNotThrow(() => App.applyChartTheme());
+
+  // Updates existing chart instance in place without refetching
+  let updatedMode = null;
+  App.state.chart = {
+    canvas: { height: 260 },
+    ctx: {
+      createLinearGradient: () => ({ addColorStop() {} }),
+    },
+    data: { datasets: [{ borderColor: "", backgroundColor: "", pointHoverBackgroundColor: "" }] },
+    options: {
+      plugins: {
+        tooltip: { backgroundColor: "", borderColor: "", titleColor: "", bodyColor: "" },
+        crosshair: { color: "" },
+        highLowRef: { color: "" },
+      },
+      scales: {
+        x: { ticks: { color: "" } },
+        y: { grid: { color: "" }, ticks: { color: "" } },
+      },
+    },
+    update(mode) {
+      updatedMode = mode;
+    },
+  };
+  App.applyChartTheme();
+  assert.equal(App.state.chart.data.datasets[0].borderColor, "#f2f3f5");
+  assert.equal(App.state.chart.options.scales.y.ticks.color, "#989da8");
+  assert.equal(updatedMode, "none");
+});
