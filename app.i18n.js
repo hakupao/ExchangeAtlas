@@ -250,8 +250,23 @@
     if (typeof App.refreshChannelLabels === "function") {
       App.refreshChannelLabels();
     }
+    if (typeof App.updateThemeToggleMeta === "function") {
+      const prefersDark =
+        typeof window.matchMedia === "function" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches;
+      App.updateThemeToggleMeta(prefersDark);
+    }
     if (typeof App.renderActiveReadout === "function") {
       App.renderActiveReadout();
+    }
+    if (
+      App.state.lastChartData &&
+      typeof App.renderPeriodStats === "function"
+    ) {
+      App.renderPeriodStats(
+        App.state.lastChartData.values,
+        App.state.lastChartData.source
+      );
     }
     if (typeof App.updateLiveRates === "function") {
       App.updateLiveRates();

@@ -5,18 +5,29 @@
     if (typeof App.getInitialLanguage === "function") {
       App.state.language = App.getInitialLanguage();
     }
-
+    if (typeof App.setupThemeToggle === "function") {
+      App.setupThemeToggle();
+    }
     if (typeof App.setupRateCards === "function") {
       App.setupRateCards();
     }
     if (typeof App.setupControls === "function") {
       App.setupControls();
     }
+    if (typeof App.setupConverter === "function") {
+      App.setupConverter();
+    }
     if (typeof App.applyTranslations === "function") {
       App.applyTranslations();
     }
     if (typeof App.setupLanguageToggle === "function") {
       App.setupLanguageToggle();
+    }
+    if (typeof App.syncActiveChannel === "function") {
+      App.syncActiveChannel();
+    }
+    if (typeof App.renderActiveReadout === "function") {
+      App.renderActiveReadout();
     }
     if (typeof App.updateLiveRates === "function") {
       App.updateLiveRates();

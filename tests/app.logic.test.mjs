@@ -477,3 +477,116 @@ test("Task 4: renderPeriodStats computes DOM values and applyChartTheme safely u
   assert.equal(App.state.chart.options.scales.y.ticks.color, "#989da8");
   assert.equal(updatedMode, "none");
 });
+
+test("Task 5: bidirectional converter handles JPY_CNY scaling, live tick preservation, empty input, and presets", () => {
+  const convBaseInput = createFakeElement("input");
+  convBaseInput.value = "100";
+  const convQuoteInput = createFakeElement("input");
+  const convBaseCode = createFakeElement("span");
+  const convQuoteCode = createFakeElement("span");
+  const convPresets = createFakeElement("div");
+  const preset10k = createFakeElement("button");
+  preset10k.dataset.amount = "10000";
+  convPresets.appendChild(preset10k);
+
+  const { App } = loadScripts(["app.core.js", "app.i18n.js", "app.controls.js"], {
+    elements: {
+      convBaseInput,
+      convQuoteInput,
+      convBaseCode,
+      convQuoteCode,
+      convPresets,
+    },
+  });
+
+  assert.equal(typeof App.setupConverter, "function");
+  assert.equal(typeof App.refreshConverterFromRate, "function");
+
+  App.setupConverter();
+  App.state.chartPairId = "JPY_CNY";
+  App.lastRates.JPY_CNY = 0.04329;
+
+  // Base 100 JPY -> 4.33 CNY
+  convBaseInput.value = "100";
+  convBaseInput.dispatchEvent("input");
+  assert.equal(convBaseCode.textContent, "JPY");
+  assert.equal(convQuoteCode.textContent, "CNY");
+  assert.equal(convQuoteInput.value, "4.33");
+
+  // Reverse edit: Quote 43.29 CNY -> 1000 JPY
+  convQuoteInput.value = "43.29";
+  convQuoteInput.dispatchEvent("input");
+  assert.equal(convBaseInput.value, "1000");
+
+  // Live tick arrives while last-edited side is quote -> quote stays "43.29", base updates
+  App.lastRates.JPY_CNY = 0.05;
+  App.refreshConverterFromRate();
+  assert.equal(convQuoteInput.value, "43.29");
+  assert.equal(convBaseInput.value, "865.8");
+
+  // Preset click sets base to 10000 and updates quote
+  convPresets.dispatchEvent("click", { target: preset10k });
+  assert.equal(convBaseInput.value, "10000");
+  assert.equal(convQuoteInput.value, "500");
+
+  // Empty input clears opposite field cleanly without NaN
+  convBaseInput.value = "";
+  convBaseInput.dispatchEvent("input");
+  assert.equal(convQuoteInput.value, "");
+});
+
+test("Task 5: setupThemeToggle switches meta color-scheme, reverts to system on 2nd click, and syncs chart theme", () => {
+  const themeToggle = createFakeElement("button");
+  const metaEl = { content: "light dark" };
+  let mediaChangeListener = null;
+  let storageListener = null;
+  let chartThemeCalls = 0;
+
+  const { App, storage } = loadScripts(
+    ["app.core.js", "app.i18n.js", "app.controls.js"],
+    {
+      elements: { themeToggle },
+      querySelector: (sel) =>
+        sel === 'meta[name="color-scheme"]' ? metaEl : null,
+      matchMedia: () => ({
+        matches: false, // OS is light
+        addEventListener: (_type, fn) => {
+          mediaChangeListener = fn;
+        },
+      }),
+      addEventListener: (type, fn) => {
+        if (type === "storage") storageListener = fn;
+      },
+    }
+  );
+
+  assert.equal(typeof App.setupThemeToggle, "function");
+  App.applyChartTheme = () => {
+    chartThemeCalls += 1;
+  };
+
+  App.setupThemeToggle();
+
+  // 1st click: OS light -> override to dark
+  themeToggle.dispatchEvent("click");
+  assert.equal(metaEl.content, "dark");
+  assert.equal(storage.get("color-scheme"), "dark");
+  assert.equal(chartThemeCalls, 1);
+
+  // 2nd click: back to light (matches OS) -> removes localStorage and restores "light dark"
+  themeToggle.dispatchEvent("click");
+  assert.equal(metaEl.content, "light dark");
+  assert.equal(storage.has("color-scheme"), false);
+  assert.equal(chartThemeCalls, 2);
+
+  // OS preference change & cross-tab storage event both re-sync chart theme
+  assert.equal(typeof mediaChangeListener, "function");
+  assert.equal(typeof storageListener, "function");
+  mediaChangeListener();
+  assert.equal(chartThemeCalls, 3);
+
+  storage.set("color-scheme", "dark");
+  storageListener({ key: "color-scheme", newValue: "dark" });
+  assert.equal(metaEl.content, "dark");
+  assert.equal(chartThemeCalls, 4);
+});
